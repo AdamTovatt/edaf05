@@ -6,10 +6,16 @@ namespace Lab1.Models
     {
         private readonly Dictionary<string, Node> _nodes;
 
-        public Graph(IEnumerable<string> words)
+        private Graph(IEnumerable<string> words)
         {
             _nodes = words.ToDictionary(w => w, w => new Node(w));
-            BuildEdges();
+        }
+
+        public static Graph Create(IEnumerable<string> words)
+        {
+            Graph graph = new Graph(words);
+            graph.BuildEdges();
+            return graph;
         }
 
         public Node GetNode(string word) => _nodes[word];

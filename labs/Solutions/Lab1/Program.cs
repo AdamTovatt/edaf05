@@ -10,7 +10,7 @@ internal class Program
         InputDataReader reader = new InputDataReader(dataSource);
         InputData input = reader.ReadInput();
 
-        Graph graph = new Graph(input.Words);
+        Graph graph = Graph.Create(input.Words);
 
         foreach (Query query in input.Queries)
         {

@@ -1,0 +1,2 @@
+Use git bash with this relative path:
+./check_solution.sh ../../Solutions/Lab1/bin/Debug/net8.0/Lab1.exe

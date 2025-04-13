@@ -79,7 +79,7 @@ namespace Tests
                 InputDataReader reader = new InputDataReader(dataSource);
                 InputData input = reader.ReadInput();
 
-                Graph graph = new Graph(input.Words);
+                Graph graph = Graph.Create(input.Words);
 
                 using (StreamReader expectedOutputReader = new StreamReader(answerPath))
                 {
