@@ -1,5 +1,8 @@
 ﻿namespace Lab1.Helpers.DataSources
 {
+    /// <summary>
+    /// Represents a data source that reads from a file stream.
+    /// </summary>
     public class FileInputDataSource : IInputDataSource, IDisposable
     {
         private readonly StreamReader _reader;

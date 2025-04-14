@@ -24,7 +24,7 @@ namespace Lab1.Models
         {
             foreach (Node from in _nodes.Values)
             {
-                string suffix = from.Word.Substring(1);
+                string suffix = from.Word.Substring(1); // take the last 4 characters (if all words are of length 5 but they are in this assignment)
                 Dictionary<char, int> requiredCounts = suffix.GetCharacterCountDictionary();
 
                 foreach (Node to in _nodes.Values)

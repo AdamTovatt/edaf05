@@ -2,8 +2,8 @@
 {
     public class Query
     {
-        public string From { get; }
-        public string To { get; }
+        public string From { get; } // from word
+        public string To { get; } // to word
 
         public Query(string from, string to)
         {

@@ -2,8 +2,8 @@
 {
     public readonly struct SearchState
     {
-        public Node Node { get; }
-        public int Distance { get; }
+        public Node Node { get; } // the node that is being searched
+        public int Distance { get; } // the distance to that node
 
         public SearchState(Node node, int distance)
         {

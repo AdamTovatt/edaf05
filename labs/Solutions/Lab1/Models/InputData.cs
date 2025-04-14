@@ -2,8 +2,8 @@
 {
     public class InputData
     {
-        public int WordCount { get; }
-        public int QueryCount { get; }
+        public int WordCount { get; } // the amount of words before the queries start
+        public int QueryCount { get; } // the amount of queries after the words
         public List<string> Words { get; }
         public List<Query> Queries { get; }
 
