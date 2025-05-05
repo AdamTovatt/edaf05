@@ -55,7 +55,7 @@
                     return;
                 }
 
-                if (_entries[index].State == EntryState.Deleted && firstDeletedIndex == -1)
+                if (_entries[index].State == EntryState.Deleted && firstDeletedIndex == -1) // Remember this for later
                 {
                     firstDeletedIndex = index;
                 }

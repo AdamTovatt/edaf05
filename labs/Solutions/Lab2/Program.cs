@@ -10,7 +10,7 @@ namespace Lab2
         static void Main(string[] args)
         {
             IInputDataSource inputSource = new ConsoleInputDataSource();
-            IHashTable<string, int> hashTable = new BuiltInDictionaryHashTable<string, int>();
+            IHashTable<string, int> hashTable = new SeparateChainingHashTable<string, int>();
 
             ProcessInput(inputSource, hashTable);
         }

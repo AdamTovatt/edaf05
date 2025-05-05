@@ -48,8 +48,9 @@
             int tableSize = _entries.Length;
             int firstDeletedIndex = -1;
 
-            for (int i = 0; i < tableSize; i++)
+            for (int i = 0; i < tableSize; i++) // Go through the table with quadratic probing
             {
+                // First loop the index will just be hash % tableSize, then hash + i^2 % tableSize and so on
                 int index = (hash + i * i) % tableSize;
                 EntryState state = _entries[index].State;
 
@@ -59,11 +60,12 @@
                     return;
                 }
 
-                if (state == EntryState.Deleted && firstDeletedIndex == -1)
+                if (state == EntryState.Deleted && firstDeletedIndex == -1) // Remember this for later
                     firstDeletedIndex = index;
 
                 if (state == EntryState.Empty)
                 {
+                    // If we previously saw a deleted entry, use that index, otherwise use "the real one"
                     int insertIndex = firstDeletedIndex != -1 ? firstDeletedIndex : index;
                     _entries[insertIndex] = new Entry
                     {

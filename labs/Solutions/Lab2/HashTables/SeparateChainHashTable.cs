@@ -122,7 +122,7 @@
 
             ResizeCount++; // Track how often resizing occurs
 
-            List<SeparateChainingHashTable<TKey, TValue>.Entry>[] newBuckets = new List<Entry>[newSize];
+            List<Entry>[] newBuckets = new List<Entry>[newSize];
 
             foreach (KeyValuePair<TKey, TValue> pair in GetPairs())
             {
