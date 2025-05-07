@@ -1,20 +1,24 @@
-﻿using Lab3.Models;
+﻿using Common;
+using Lab3.Models;
 
 namespace Lab3.Algorithms
 {
     public static class KruskalSolver
     {
-        public static int ComputeMinimumTotalWeight(InputData input)
+        public static int ComputeMinimumTotalWeight(InputData input, SectionTimer? sectionTimer = null)
         {
             List<Connection> connections = input.Connections;
 
+            sectionTimer?.StartSection("sortConnections");
             connections.Sort((a, b) => a.Weight.CompareTo(b.Weight)); // sort ascending aka from lowest to highest
+            sectionTimer?.StopSection("sortConnections");
 
             UnionFind unionFind = new UnionFind(input.NumberOfPeople); // initialize a new instance of the union find class, in this, each person is their own "tree"
 
             int totalWeight = 0;
             int edgesUsed = 0;
 
+            sectionTimer?.StartSection("createTree");
             foreach (Connection connection in connections)
             {
                 // will try to union the nodes / persons (whaever you want to call it) so they are considered part of the same tree
@@ -30,6 +34,7 @@ namespace Lab3.Algorithms
                         break; // we should've gone through all the edges at this point
                 }
             }
+            sectionTimer?.StopSection("createTree");
 
             return totalWeight;
         }

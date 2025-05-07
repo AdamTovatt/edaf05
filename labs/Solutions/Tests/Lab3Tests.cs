@@ -1,4 +1,5 @@
-﻿using Common.DataSources;
+﻿using Common;
+using Common.DataSources;
 using Lab3;
 using Tests.Helpers;
 
@@ -27,7 +28,12 @@ namespace Tests
             using FileInputDataSource input = new FileInputDataSource(path.InputPath);
             using StreamReader expected = new StreamReader(path.AnswerPath);
 
-            int result = Program.Solve(input);
+            SectionTimer sectionTimer = new SectionTimer();
+            sectionTimer.StartSection("fullSolve", excludeFromTotalSum: true);
+
+            int result = Program.Solve(input, sectionTimer);
+
+            sectionTimer.StopSection("fullSolve");
             string? expectedOutput = expected.ReadLine();
 
             Assert.IsNotNull(expectedOutput, $"Missing expected output in: {Path.GetFileName(path.AnswerPath)}");
@@ -35,6 +41,8 @@ namespace Tests
             string actualOutput = result.ToString();
 
             Assert.AreEqual(expectedOutput, actualOutput, $"Mismatch for test case: {Path.GetFileName(path.InputPath)}");
+
+            Console.WriteLine(sectionTimer.ToString());
         }
     }
 }

@@ -14,12 +14,16 @@ namespace Lab3
             Console.WriteLine(result);
         }
 
-        public static int Solve(IInputDataSource inputSource)
+        public static int Solve(IInputDataSource inputSource, SectionTimer? sectionTimer = null)
         {
+            sectionTimer?.StartSection("readInput");
+
             InputDataReader<InputData> reader = new InputDataReader<InputData>(inputSource);
             InputData input = reader.Read();
 
-            return KruskalSolver.ComputeMinimumTotalWeight(input);
+            sectionTimer?.StopSection("readInput");
+
+            return KruskalSolver.ComputeMinimumTotalWeight(input, sectionTimer);
         }
     }
 }
