@@ -1,1 +1,0 @@
-./check_solution.sh ../../Solutions/Lab3/bin/Debug/net8.0/Lab3.exe
