@@ -49,18 +49,18 @@ namespace Lab4.Algorithms
             long leftMinDistance = FindClosestRecursive(leftByX, leftByY); // recurse on left half
             long rightMinDistance = FindClosestRecursive(rightByX, rightByY); // recurse on right half
 
-            long currentMin = Math.Min(leftMinDistance, rightMinDistance); // closest distance so far
+            long currentMinDistance = Math.Min(leftMinDistance, rightMinDistance); // closest distance so far
 
             List<Point> strip = new List<Point>();
 
             foreach (Point point in pointsSortedByY)
             {
                 long deltaX = (long)point.X - midpoint.X;
-                if (deltaX * deltaX < currentMin)
+                if (deltaX * deltaX < currentMinDistance)
                     strip.Add(point); // only consider points within currentMin from mid line
             }
 
-            return Math.Min(currentMin, ClosestInStrip(strip, currentMin));
+            return Math.Min(currentMinDistance, ClosestInStrip(strip, currentMinDistance));
         }
 
         private static long ClosestInStrip(List<Point> strip, long maxDistanceSquared)
