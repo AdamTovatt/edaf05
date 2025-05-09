@@ -70,7 +70,7 @@ namespace Lab4.Algorithms
 
             for (int i = 0; i < count; i++)
             {
-                // Only compare next ~7 neighbors due to geometric constraints
+                // not using the hardcoded 7 limit count like the course suggests here because that's slower (see comment below)
                 for (int j = i + 1; j < count && Square(strip[j].Y - strip[i].Y) < best; j++)
                 {
                     long dx = strip[i].X - strip[j].X;
