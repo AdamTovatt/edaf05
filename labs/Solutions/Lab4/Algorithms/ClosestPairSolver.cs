@@ -82,6 +82,25 @@ namespace Lab4.Algorithms
                 }
             }
 
+            // the above loop could also be solved as below, which is more accurate to how it's presented in the course
+            // but that solution is in reality slower, both for our test cases and probably just in general too
+            /*
+            for (int i = 0; i < count; i++)
+            {
+                int limit = Math.Min(i + 8, count); // 8 instead of 7 since we do j < limit in the loop below
+
+                for (int j = i + 1; j < limit; j++)
+                {
+                    long dx = strip[i].X - strip[j].X;
+                    long dy = strip[i].Y - strip[j].Y;
+                    long distSquared = dx * dx + dy * dy;
+
+                    if (distSquared < best)
+                        best = distSquared;
+                }
+            }
+            */
+
             return best;
         }
 
