@@ -46,10 +46,10 @@ namespace Lab4.Algorithms
                     rightByY.Add(point); // maintain y-sorted order for right half
             }
 
-            long leftMin = FindClosestRecursive(leftByX, leftByY); // recurse on left half
-            long rightMin = FindClosestRecursive(rightByX, rightByY); // recurse on right half
+            long leftMinDistance = FindClosestRecursive(leftByX, leftByY); // recurse on left half
+            long rightMinDistance = FindClosestRecursive(rightByX, rightByY); // recurse on right half
 
-            long currentMin = Math.Min(leftMin, rightMin); // closest distance so far
+            long currentMin = Math.Min(leftMinDistance, rightMinDistance); // closest distance so far
 
             List<Point> strip = new List<Point>();
 

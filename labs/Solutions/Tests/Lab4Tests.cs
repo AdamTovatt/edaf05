@@ -34,13 +34,13 @@ namespace Tests
 
         private void TestSolverWithPaths(TestCasePath path)
         {
-            using FileInputDataSource input = new FileInputDataSource(path.InputPath);
+            using FileInputDataSource inputSource = new FileInputDataSource(path.InputPath);
             using StreamReader expected = new StreamReader(path.AnswerPath);
 
             SectionTimer sectionTimer = new SectionTimer();
             sectionTimer.StartSection("fullSolve", excludeFromTotalSum: true);
 
-            double result = Program.Solve(input, sectionTimer);
+            double result = Program.Solve(inputSource, sectionTimer);
 
             sectionTimer.StopSection("fullSolve");
 

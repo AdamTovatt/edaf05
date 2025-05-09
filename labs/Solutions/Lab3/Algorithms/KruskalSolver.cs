@@ -21,7 +21,7 @@ namespace Lab3.Algorithms
             sectionTimer?.StartSection("createTree");
             foreach (Connection connection in connections)
             {
-                // will try to union the nodes / persons (whaever you want to call it) so they are considered part of the same tree
+                // will try to union the nodes / persons (whatever you want to call it) so they are considered part of the same tree
                 // this means that the trees that they are part of will end up with the same root
                 bool didUnion = unionFind.Union(connection.PersonA, connection.PersonB); // if they were already part of the same tree this will return false
 
