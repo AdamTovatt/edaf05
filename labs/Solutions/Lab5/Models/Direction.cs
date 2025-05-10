@@ -1,6 +1,9 @@
-﻿public enum Direction
+﻿namespace Lab5
 {
-    Diagonal,
-    Up,
-    Left
+    public enum Direction
+    {
+        Diagonal,
+        Up,
+        Left
+    }
 }
