@@ -37,7 +37,7 @@ namespace Tests
 
             // Run solver with new input source (required by Program.Solve signature)
             using FileInputDataSource freshSource = new FileInputDataSource(path.InputPath);
-            List<StringPair> actualResults = Program.Solve(freshSource, sectionTimer).ToList();
+            List<StringPair> actualResults = Program.Solve(freshSource, sectionTimer, true).ToList();
             List<StringPair> expectedResults = ReadExpectedResults(expectedOutputReader).ToList();            
 
             Assert.AreEqual(expectedResults.Count, actualResults.Count, "Mismatch in number of results");

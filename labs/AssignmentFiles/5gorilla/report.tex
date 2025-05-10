@@ -7,17 +7,55 @@
 \pagestyle{empty}
 
 \title{Gorilla Report}
-\author{Author 1 and Author 2}
+\author{Adam Tovatt}
 
 \begin{document}
-  \maketitle
+\maketitle
 
-  \section{Results}
+\section{Results}
 
-  \todo[inline]{Briefly comment the results, did the script say all your solutions were correct? Approximately how long time does it take for the program to run on the largest input? What takes the majority of the time?}
+All test cases passed when running the provided \texttt{check\_solution.sh} script. The program runs efficiently, completing even the largest test case (secret/4huge.in) in around 209 milliseconds on a modern desktop machine (intel i9-9900k). The majority of the time is spent computing the dynamic programming tables and reconstructing the alignments for each query.\\ 
 
+\begin{tabular}{lrr}
+\textbf{Section} & \textbf{Time (ms)} & \textbf{Percent of Total} \\
+\hline
+readInput & 0.31  & 0.1\% \\
+solve     & 209   & 99.9\% \\
+\end{tabular}
+
+  \clearpage
   \section{Implementation details}
 
-  \todo[inline]{How did you implement the solution? Which data structures were used? Which modifications to these data structures were used? What is the overall running time? Why?}
+The solution is based on a classic dynamic programming algorithm for sequence alignment. The input is parsed into a reusable alignment context (containing the character set and cost matrix), and a list of query string pairs. Each alignment query is independent and solved using an iterative algorithm that fills a 2D DP table and a backtrack table to reconstruct the optimal alignment. The implementation is fully parallelized across queries using \texttt{AsParallel} to reduce overall runtime.
+
+The core data structures used are:
+\begin{itemize}
+  \item A 2D \texttt{int[,]} DP table for tracking the maximum gain up to each prefix
+  \item A 2D \texttt{Direction[,]} backtrack table to reconstruct the alignment path
+  \item An \texttt{AlignmentContext} object that maps characters to indices and stores the cost matrix
+\end{itemize}
+
+The overall running time for a single query is \( O(NM) \), where \( N \) and \( M \) are the lengths of the two strings. This is due to filling a DP table of size \( N \times M \) and doing constant-time work per cell. Because all queries are independent, the solution can be parallelized safely across them.
+
+\subsection*{Discussion Questions}
+
+\textbf{Is your solution recursive or iterative?} \\
+The solution is iterative. Both the DP table and the backtrack reconstruction are implemented with loops, not recursion.
+
+\vspace{1em}
+\textbf{What is the time complexity, and more importantly why?} \\
+The time complexity per alignment is \( O(NM) \) because each of the \( N \times M \) table entries is computed once using three constant-time comparisons.
+
+\vspace{1em}
+\textbf{What would the time complexity of a recursive solution without cache be?} \\
+It would be exponential, specifically \( O(3^{N+M}) \), because each step could branch into up to three recursive calls without remembering results.
+
+\vspace{1em}
+\textbf{Can you think of any applications of this type of string alignment?} \\
+Yes. Bioinformatics to align DNA or protein sequences, and in natural language processing for fuzzy matching or edit distance. Not sure how git works but git probably uses some kind of string alignment too.
+
+\vspace{1em}
+\textbf{What could the costs represent in the applications?} \\
+In biology, costs can represent biological likelihoods of mutation, substitution, or gaps in evolutionary history. In text matching, they might represent character substitution penalties or edit weights.
 
 \end{document}

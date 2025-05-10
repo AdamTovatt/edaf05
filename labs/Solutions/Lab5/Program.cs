@@ -15,7 +15,7 @@ namespace Lab5
                 Console.WriteLine($"{result.First} {result.Second}");
         }
 
-        public static IEnumerable<StringPair> Solve(IInputDataSource inputSource, SectionTimer? sectionTimer = null)
+        public static IEnumerable<StringPair> Solve(IInputDataSource inputSource, SectionTimer? sectionTimer = null, bool parallel = true)
         {
             sectionTimer?.StartSection("readInput");
 
@@ -25,15 +25,26 @@ namespace Lab5
             sectionTimer?.StopSection("readInput");
             sectionTimer?.StartSection("solve");
 
-            IEnumerable<StringPair> results = input.Queries
-                .AsParallel()
-                .AsOrdered() // Preserves the order of the input queries
-                .Select(query => StringAligner.Align(query, input.Context))
-                .ToList();
+            if (parallel)
+            {
+                IEnumerable<StringPair> results = input.Queries
+                    .AsParallel()
+                    .AsOrdered() // Preserves the order of the input queries
+                    .Select(query => StringAligner.Align(query, input.Context))
+                    .ToList(); // Evaluate as list to make it greedy
 
-            sectionTimer?.StopSection("solve");
+                sectionTimer?.StopSection("solve");
 
-            return results;
+                return results;
+            }
+            else
+            {
+                IEnumerable<StringPair> results = input.Queries.Select(query => StringAligner.Align(query, input.Context)).ToList(); // Evaluate as list to make it greedy
+
+                sectionTimer?.StopSection("solve");
+
+                return results;
+            }
         }
     }
 }
