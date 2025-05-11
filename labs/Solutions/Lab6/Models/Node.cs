@@ -10,5 +10,10 @@
             Id = id;
             Edges = new List<Edge>();
         }
+
+        public override string ToString()
+        {
+            return $"{Id}";
+        }
     }
 }

@@ -10,10 +10,10 @@ namespace Lab6.Models
         public int EdgeCount { get; }
         public int RequiredFlow { get; }
         public int PlanLength { get; }
-        public List<Edge> Edges { get; }
+        public List<InputEdge> Edges { get; }
         public List<int> RemovalPlan { get; }
 
-        private InputData(int nodeCount, int edgeCount, int requiredFlow, int planLength, List<Edge> edges, List<int> removalPlan)
+        private InputData(int nodeCount, int edgeCount, int requiredFlow, int planLength, List<InputEdge> edges, List<int> removalPlan)
         {
             NodeCount = nodeCount;
             EdgeCount = edgeCount;
@@ -25,44 +25,48 @@ namespace Lab6.Models
 
         public static InputData Parse(IInputDataSource source)
         {
-            string? firstLine = source.ReadLine();
-            if (firstLine == null)
-                throw new InvalidOperationException("Missing first line of input.");
+            string sourceLine = GetLine(source, "Missing first line of input.");
 
-            string[] firstParts = firstLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            int nodeCount = int.Parse(firstParts[0], CultureInfo.InvariantCulture);
-            int edgeCount = int.Parse(firstParts[1], CultureInfo.InvariantCulture);
-            int requiredFlow = int.Parse(firstParts[2], CultureInfo.InvariantCulture);
-            int planLength = int.Parse(firstParts[3], CultureInfo.InvariantCulture);
+            string[] firstParts = sourceLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            int nodeCount = GetPartAsInt(firstParts, 0);
+            int edgeCount = GetPartAsInt(firstParts, 1);
+            int requiredFlow = GetPartAsInt(firstParts, 2);
+            int planLength = GetPartAsInt(firstParts, 3);
 
-            List<Edge> edges = new List<Edge>(edgeCount);
+            List<InputEdge> edges = new List<InputEdge>(edgeCount);
 
             for (int i = 0; i < edgeCount; i++)
             {
-                string? line = source.ReadLine();
-                if (line == null)
-                    throw new InvalidOperationException($"Missing edge {i + 1}.");
+                sourceLine = GetLine(source, $"Missing edge {i + 1}.");
 
-                string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                int from = int.Parse(parts[0], CultureInfo.InvariantCulture);
-                int to = int.Parse(parts[1], CultureInfo.InvariantCulture);
-                int capacity = int.Parse(parts[2], CultureInfo.InvariantCulture);
-
-                edges.Add(new Edge(from, to, capacity));
+                edges.Add(InputEdge.FromString(sourceLine));
             }
 
             List<int> removalPlan = new List<int>(planLength);
             for (int i = 0; i < planLength; i++)
-            {
-                string? line = source.ReadLine();
-                if (line == null)
-                    throw new InvalidOperationException($"Missing removal index {i + 1}.");
-
-                int index = int.Parse(line, CultureInfo.InvariantCulture);
-                removalPlan.Add(index);
-            }
+                removalPlan.Add(GetInt(GetLine(source, $"Missing removal index {i + 1}.")));
 
             return new InputData(nodeCount, edgeCount, requiredFlow, planLength, edges, removalPlan);
+        }
+
+        private static string GetLine(IInputDataSource source, string errorMessage)
+        {
+            string? line = source.ReadLine();
+
+            if (line == null)
+                throw new InvalidOperationException(errorMessage);
+
+            return line;
+        }
+
+        private static int GetPartAsInt(string[] parts, int index)
+        {
+            return int.Parse(parts[index], CultureInfo.InvariantCulture);
+        }
+
+        private static int GetInt(string originalString)
+        {
+            return int.Parse(originalString, CultureInfo.InvariantCulture);
         }
     }
 }

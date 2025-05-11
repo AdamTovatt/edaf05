@@ -33,7 +33,7 @@ namespace Tests
             SectionTimer sectionTimer = new SectionTimer();
             sectionTimer.StartSection("fullSolve", excludeFromTotalSum: true);
 
-            SolveResult result = Program.Solve<FordFulkersonSolver>(inputSource, sectionTimer);
+            SolveResult result = Program.Solve(inputSource, sectionTimer);
 
             sectionTimer.StopSection("fullSolve");
 

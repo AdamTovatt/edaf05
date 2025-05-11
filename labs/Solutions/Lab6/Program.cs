@@ -10,12 +10,11 @@ namespace Lab6
         public static void Main(string[] args)
         {
             IInputDataSource inputSource = new ConsoleInputDataSource();
-            SolveResult result = Solve<FordFulkersonSolver>(inputSource);
+            SolveResult result = Solve(inputSource);
             Console.WriteLine(result);
         }
 
-        public static SolveResult Solve<TSolver>(IInputDataSource inputSource, SectionTimer? sectionTimer = null)
-            where TSolver : MaxFlowSolverBase
+        public static SolveResult Solve(IInputDataSource inputSource, SectionTimer? sectionTimer = null)
         {
             sectionTimer?.StartSection("readInput");
 
@@ -25,38 +24,31 @@ namespace Lab6
             sectionTimer?.StopSection("readInput");
             sectionTimer?.StartSection("solve");
 
-            int currentFlow;
+            Graph graph = Graph.CreateFromInputData(input);
+            MaxFlowSolver flowSolver = new MaxFlowSolver(graph);
+
             int removedCount = 0;
-            List<Edge> remainingEdges = new List<Edge>(input.Edges);
+            int allTimeMaxFlow = 0;
 
-            // Initial max flow
-            IMaxFlowSolver solver = SolverFactory.CreateSolver<TSolver>(input.NodeCount);
-
-            foreach (Edge edge in remainingEdges)
-                solver.AddUndirectedEdge(edge.From, edge.To, edge.Capacity);
-
-            currentFlow = solver.ComputeMaxFlow(0, input.NodeCount - 1);
-
-            // Try removing edges
-            foreach (int index in input.RemovalPlan)
+            while (true)
             {
-                Edge toRemove = input.Edges[index];
-                remainingEdges.Remove(toRemove);
+                int currentMaxFlow = flowSolver.ComputeMaxFlow(graph.Nodes.First(), graph.Nodes.Last());
 
-                IMaxFlowSolver modifiedSolver = SolverFactory.CreateSolver<TSolver>(input.NodeCount);
-                foreach (Edge edge in remainingEdges)
-                    modifiedSolver.AddUndirectedEdge(edge.From, edge.To, edge.Capacity);
+                if (currentMaxFlow >= input.RequiredFlow)
+                {
+                    allTimeMaxFlow = currentMaxFlow;
 
-                int newFlow = modifiedSolver.ComputeMaxFlow(0, input.NodeCount - 1);
-                if (newFlow < input.RequiredFlow)
+                    graph.RemoveEdgeByIndex(input.RemovalPlan[removedCount]);
+                    removedCount++;
+
+                    graph.ResetFlows();
+                }
+                else
                     break;
-
-                removedCount++;
-                currentFlow = newFlow;
             }
 
             sectionTimer?.StopSection("solve");
-            return new SolveResult(removedCount, currentFlow);
+            return new SolveResult(removedCount, allTimeMaxFlow);
         }
     }
 }
