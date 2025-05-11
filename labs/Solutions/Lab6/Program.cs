@@ -28,23 +28,28 @@ namespace Lab6
             MaxFlowSolver flowSolver = new MaxFlowSolver(graph);
 
             int removedCount = 0;
-            int allTimeMaxFlow = 0;
+            int allTimeMaxFlow = flowSolver.ComputeMaxFlow(graph.Nodes.First(), graph.Nodes.Last());
 
-            while (true)
+            foreach (int index in input.RemovalPlan)
             {
-                int currentMaxFlow = flowSolver.ComputeMaxFlow(graph.Nodes.First(), graph.Nodes.Last());
+                graph.RemoveEdgeByIndex(index);
 
-                if (currentMaxFlow >= input.RequiredFlow)
+                int edgeCountInNodes = graph.Nodes.SelectMany(n => n.Edges).Distinct().Count();
+
+                graph.ResetFlows();
+                Console.WriteLine($"[DEBUG] Unique edges in Node.Edges after removal: {edgeCountInNodes}");
+
+                flowSolver = new MaxFlowSolver(graph);
+                int newFlow = flowSolver.ComputeMaxFlow(graph.Nodes.First(), graph.Nodes.Last());
+                if (newFlow >= input.RequiredFlow)
                 {
-                    allTimeMaxFlow = currentMaxFlow;
-
-                    graph.RemoveEdgeByIndex(input.RemovalPlan[removedCount]);
+                    allTimeMaxFlow = newFlow;
                     removedCount++;
-
-                    graph.ResetFlows();
                 }
                 else
+                {
                     break;
+                }
             }
 
             sectionTimer?.StopSection("solve");

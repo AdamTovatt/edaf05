@@ -15,15 +15,27 @@ namespace Lab6.Algorithms
         {
             int totalFlow = 0;
 
+            Console.WriteLine($"Computing max flow from {source} to {sink}.");
+            Console.WriteLine(Graph);
+
             while (true)
             {
+                Console.WriteLine("Finding path...");
                 FlowPath path = Graph.FindAugmentingPath(source, sink);
+
+                Console.WriteLine("Path found:");
+                Console.WriteLine(path);
+
                 if (path.IsEmpty)
                     break;
 
                 int flowToAdd = path.CalculateBottleneck();
                 path.ApplyFlow(flowToAdd);
                 totalFlow += flowToAdd;
+
+                Console.WriteLine("Did apply the flow: " + flowToAdd);
+                Console.WriteLine("Path after flow applied: ");
+                Console.WriteLine(path);
             }
 
             return totalFlow;

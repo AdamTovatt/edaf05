@@ -45,6 +45,9 @@ namespace Lab6.Models
 
         public override string ToString()
         {
+            if (IsEmpty)
+                return "[Empty path]";
+
             StringBuilder stringBuilder = new StringBuilder();
             bool first = true;
 

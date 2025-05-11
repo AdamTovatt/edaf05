@@ -1,11 +1,13 @@
-﻿namespace Lab6.Models
+﻿using System.Text;
+
+namespace Lab6.Models
 {
     public class Graph
     {
         public List<Node> Nodes { get; }
         public List<Edge?> Edges { get; }
 
-        private Graph(List<Node> nodes, List<Edge?> edges)
+        public Graph(List<Node> nodes, List<Edge?> edges)
         {
             Nodes = nodes;
             Edges = edges;
@@ -64,7 +66,7 @@
 
             return new FlowPath(source, new List<Edge>());
         }
-
+            
         private FlowPath ReconstructPath(Node source, Node sink, Dictionary<Node, Edge> cameFrom)
         {
             List<Edge> path = new();
@@ -89,6 +91,14 @@
             if (edge == null) return;
 
             edge.Detach();
+
+            // 🔍 Sanity check
+            bool stillExists = edge.Start.Edges.Contains(edge) || edge.End.Edges.Contains(edge);
+            if (stillExists)
+            {
+                Console.WriteLine($"[BUG] Edge {index} still present in node edge lists after Detach()");
+            }
+
             Edges[index] = null;
         }
 
@@ -99,6 +109,20 @@
                 if (edge != null)
                     edge.Flow = 0;
             }
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Graph:");
+
+            foreach (Edge? edge in Edges)
+            {
+                if (edge != null)
+                    sb.AppendLine("  " + edge);
+            }
+
+            return sb.ToString();
         }
     }
 }

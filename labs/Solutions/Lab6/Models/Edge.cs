@@ -7,6 +7,8 @@
         public int Capacity { get; }
         public int Flow { get; set; }
 
+        public int FlowApplications { get; private set; }
+
         public Edge(Node from, Node to, int capacity)
         {
             Start = from;
@@ -24,21 +26,25 @@
 
         public int ResidualCapacity(Node from, Node to)
         {
-            if (from == Start && to == End) return Capacity - Flow;
-            if (from == End && to == Start) return Flow;
+            if (from == Start && to == End)
+                return Capacity - Math.Abs(Flow);
+            if (from == End && to == Start)
+                return Capacity - Math.Abs(Flow);
             return 0;
         }
 
         public void AddFlow(Node from, Node to, int amount)
         {
-            if (from == Start && to == End) Flow += amount;
-            else if (from == End && to == Start) Flow -= amount;
+            if (from == Start && to == End)
+                Flow += amount;
+            else if (from == End && to == Start)
+                Flow -= amount;
         }
 
         public void Detach()
         {
-            Start.Edges.Remove(this);
-            End.Edges.Remove(this);
+            Start.Edges.RemoveAll(e => ReferenceEquals(e, this));
+            End.Edges.RemoveAll(e => ReferenceEquals(e, this));
         }
 
         public override string ToString()
