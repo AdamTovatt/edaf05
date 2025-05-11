@@ -10,11 +10,12 @@ namespace Lab6
         public static void Main(string[] args)
         {
             IInputDataSource inputSource = new ConsoleInputDataSource();
-            SolveResult result = Solve(inputSource);
+            SolveResult result = Solve<FordFulkersonSolver>(inputSource);
             Console.WriteLine(result);
         }
 
-        public static SolveResult Solve(IInputDataSource inputSource, SectionTimer? sectionTimer = null)
+        public static SolveResult Solve<TSolver>(IInputDataSource inputSource, SectionTimer? sectionTimer = null)
+            where TSolver : MaxFlowSolverBase
         {
             sectionTimer?.StartSection("readInput");
 
@@ -24,20 +25,29 @@ namespace Lab6
             sectionTimer?.StopSection("readInput");
             sectionTimer?.StartSection("solve");
 
-            MaxFlowNetwork network = new MaxFlowNetwork(input.NodeCount);
-
-            foreach (Edge edge in input.Edges)
-                network.AddUndirectedEdge(edge.From, edge.To, edge.Capacity);
-
-            int currentFlow = network.ComputeMaxFlow(0, input.NodeCount - 1);
+            int currentFlow;
             int removedCount = 0;
+            List<Edge> remainingEdges = new List<Edge>(input.Edges);
 
+            // Initial max flow
+            IMaxFlowSolver solver = SolverFactory.CreateSolver<TSolver>(input.NodeCount);
+
+            foreach (Edge edge in remainingEdges)
+                solver.AddUndirectedEdge(edge.From, edge.To, edge.Capacity);
+
+            currentFlow = solver.ComputeMaxFlow(0, input.NodeCount - 1);
+
+            // Try removing edges
             foreach (int index in input.RemovalPlan)
             {
-                Edge edgeToRemove = input.Edges[index];
-                network.RemoveEdge(edgeToRemove.From, edgeToRemove.To);
+                Edge toRemove = input.Edges[index];
+                remainingEdges.Remove(toRemove);
 
-                int newFlow = network.ComputeMaxFlow(0, input.NodeCount - 1);
+                IMaxFlowSolver modifiedSolver = SolverFactory.CreateSolver<TSolver>(input.NodeCount);
+                foreach (Edge edge in remainingEdges)
+                    modifiedSolver.AddUndirectedEdge(edge.From, edge.To, edge.Capacity);
+
+                int newFlow = modifiedSolver.ComputeMaxFlow(0, input.NodeCount - 1);
                 if (newFlow < input.RequiredFlow)
                     break;
 

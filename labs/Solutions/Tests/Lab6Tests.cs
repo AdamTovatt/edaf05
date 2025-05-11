@@ -1,6 +1,7 @@
 ﻿using Common;
 using Common.DataSources;
 using Lab6;
+using Lab6.Algorithms;
 using Lab6.Models;
 using Tests.Helpers;
 
@@ -32,7 +33,7 @@ namespace Tests
             SectionTimer sectionTimer = new SectionTimer();
             sectionTimer.StartSection("fullSolve", excludeFromTotalSum: true);
 
-            SolveResult result = Program.Solve(inputSource, sectionTimer);
+            SolveResult result = Program.Solve<FordFulkersonSolver>(inputSource, sectionTimer);
 
             sectionTimer.StopSection("fullSolve");
 
