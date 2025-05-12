@@ -2,18 +2,18 @@
 {
     public readonly struct SolveResult
     {
-        public int RoutesRemoved { get; }
-        public int FinalFlow { get; }
+        public int RemovedCount { get; }
+        public int MaxFlow { get; }
 
-        public SolveResult(int routesRemoved, int finalFlow)
+        public SolveResult(int removedCount, int maxFlow)
         {
-            RoutesRemoved = routesRemoved;
-            FinalFlow = finalFlow;
+            RemovedCount = removedCount;
+            MaxFlow = maxFlow;
         }
 
         public override string ToString()
         {
-            return $"{RoutesRemoved} {FinalFlow}";
+            return $"{RemovedCount} {MaxFlow}";
         }
     }
 }

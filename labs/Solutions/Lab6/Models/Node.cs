@@ -15,5 +15,17 @@
         {
             return $"{Id}";
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is Node other)
+                return Id == other.Id;
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
     }
 }

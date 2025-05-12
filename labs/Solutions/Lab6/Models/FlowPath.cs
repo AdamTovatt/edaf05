@@ -17,18 +17,18 @@ namespace Lab6.Models
 
         public int CalculateBottleneck()
         {
-            int flow = int.MaxValue;
+            int maxPossibleFlow = int.MaxValue;
             Node current = _source;
 
             foreach (Edge edge in _edges)
             {
                 Node next = edge.GetOther(current);
-                int residual = edge.ResidualCapacity(current, next);
-                flow = Math.Min(flow, residual);
+                int residual = edge.RemainingCapacity;
+                maxPossibleFlow = Math.Min(maxPossibleFlow, residual);
                 current = next;
             }
 
-            return flow;
+            return maxPossibleFlow;
         }
 
         public void ApplyFlow(int flow)
@@ -38,7 +38,7 @@ namespace Lab6.Models
             foreach (Edge edge in _edges)
             {
                 Node next = edge.GetOther(current);
-                edge.AddFlow(current, next, flow);
+                edge.AddFlow(flow);
                 current = next;
             }
         }

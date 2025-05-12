@@ -4,14 +4,14 @@ namespace Lab6.Models
 {
     public readonly struct InputEdge
     {
-        public int Start { get; init; }
-        public int End { get; init; }
+        public int From { get; init; }
+        public int To { get; init; }
         public int Capacity { get; init; }
 
         public InputEdge(int start, int end, int capacity)
         {
-            Start = start;
-            End = end;
+            From = start;
+            To = end;
             Capacity = capacity;
         }
 

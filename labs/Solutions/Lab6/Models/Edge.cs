@@ -4,16 +4,15 @@
     {
         public Node Start { get; }
         public Node End { get; }
-        public int Capacity { get; }
+        public int OriginalCapacity { get; }
         public int Flow { get; set; }
+        public int RemainingCapacity => OriginalCapacity - Flow;
 
-        public int FlowApplications { get; private set; }
-
-        public Edge(Node from, Node to, int capacity)
+        public Edge(Node from, Node to, int originalCapacity)
         {
             Start = from;
             End = to;
-            Capacity = capacity;
+            OriginalCapacity = originalCapacity;
             Flow = 0;
         }
 
@@ -24,21 +23,9 @@
             throw new ArgumentException("Node not part of this edge.");
         }
 
-        public int ResidualCapacity(Node from, Node to)
+        public void AddFlow(int amount)
         {
-            if (from == Start && to == End)
-                return Capacity - Math.Abs(Flow);
-            if (from == End && to == Start)
-                return Capacity - Math.Abs(Flow);
-            return 0;
-        }
-
-        public void AddFlow(Node from, Node to, int amount)
-        {
-            if (from == Start && to == End)
-                Flow += amount;
-            else if (from == End && to == Start)
-                Flow -= amount;
+            Flow += amount;
         }
 
         public void Detach()
@@ -49,12 +36,12 @@
 
         public override string ToString()
         {
-            return $"{Start} -({Flow} / {Capacity})-> {End}";
+            return $"{Start} -({Flow} / {OriginalCapacity})-> {End}";
         }
 
         public string ToStringEnd()
         {
-            return $" -({Flow} / {Capacity})-> {End}";
+            return $" -({Flow} / {OriginalCapacity})-> {End}";
         }
     }
 }

@@ -23,8 +23,8 @@ namespace Lab6.Models
             for (int i = 0; i < input.Edges.Count; i++)
             {
                 InputEdge inputEdge = input.Edges[i];
-                Node start = nodes[inputEdge.Start];
-                Node end = nodes[inputEdge.End];
+                Node start = nodes[inputEdge.From];
+                Node end = nodes[inputEdge.To];
                 Edge edge = new Edge(start, end, inputEdge.Capacity);
                 edges.Add(edge);
                 start.Edges.Add(edge);
@@ -52,7 +52,7 @@ namespace Lab6.Models
                     Node neighbor = edge.GetOther(current);
                     if (visited.Contains(neighbor)) continue;
 
-                    if (edge.ResidualCapacity(current, neighbor) > 0)
+                    if (Math.Abs(edge.Flow + 1) <= edge.OriginalCapacity)
                     {
                         cameFrom[neighbor] = edge;
                         visited.Add(neighbor);
@@ -66,7 +66,7 @@ namespace Lab6.Models
 
             return new FlowPath(source, new List<Edge>());
         }
-            
+
         private FlowPath ReconstructPath(Node source, Node sink, Dictionary<Node, Edge> cameFrom)
         {
             List<Edge> path = new();
