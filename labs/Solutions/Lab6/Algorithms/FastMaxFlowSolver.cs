@@ -84,10 +84,10 @@ namespace Lab6.Algorithms
 
             for (int target = 0; target < nodeCount; target++)
             {
-                if (capacity[source, target] > 0) // non existing edges will have 0 capacity meaning we ship them
+                if (capacity[source, target] > 0) // non existing edges will have 0 capacity meaning we skip them
                 {
                     flow[source, target] = capacity[source, target];
-                    flow[target, source] = -capacity[source, target]; // for residual capacity
+                    flow[target, source] = -capacity[source, target]; // for residual capacity in the reverse direction
                     excess[target] = capacity[source, target]; // now the target node has excess from what we pushed
                 }
             }
