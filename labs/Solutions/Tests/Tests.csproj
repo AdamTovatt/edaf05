@@ -26,10 +26,4 @@
     <ProjectReference Include="..\Lab6\Lab6.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="TestData\Lab3\" />
-    <Folder Include="TestData\Lab5\" />
-    <Folder Include="TestData\Lab6\" />
-  </ItemGroup>
-
 </Project>
