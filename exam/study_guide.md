@@ -468,13 +468,28 @@ There are two main ways to represent a graph:
   2. Graham Scan:
      * Sort points by polar angle
      * Use stack to build hull
-     * Remove points that create concave angles
-     * Time: O(n log n) for sorting
+     * Time: O(n log n) due to sorting
   3. Preparata-Hong:
-     * Divide points into two sets
-     * Find hulls recursively
-     * Merge hulls efficiently
-     * Time: O(n log n)
+     * Divide-and-conquer algorithm for 3D convex hull
+     * Process:
+       - Split points into two halves
+       - Find hulls recursively
+       - Merge hulls by finding "bridge" edges
+     * Time complexity: O(n log n)
+     * Advantages:
+       - Works in 3D
+       - Efficient merging step
+       - Good for parallel implementation
+     * Applications:
+       - 3D modeling
+       - Computer graphics
+       - Collision detection
+- Applications:
+  * Collision detection
+  * Path planning
+  * Pattern recognition
+  * Computer graphics
+- Base case: When we have 3 or fewer points, use brute force
 
 ### Finding Nearest Points
 - Problem: Find the smallest distance between any two points in a 2D plane
@@ -738,25 +753,6 @@ There are two main ways to represent a graph:
   * Hardware verification
   * Software testing
   * Planning problems
-
-### Convex Hull
-// ... existing code ...
-
-### Preparata-Hong Algorithm
-- Divide-and-conquer algorithm for 3D convex hull
-- Process:
-  * Split points into two halves
-  * Find hulls recursively
-  * Merge hulls by finding "bridge" edges
-- Time complexity: O(n log n)
-- Advantages:
-  * Works in 3D
-  * Efficient merging step
-  * Good for parallel implementation
-- Applications:
-  * 3D modeling
-  * Computer graphics
-  * Collision detection
 
 ## Linear Programming
 ### Linear and Integer Linear Programming
