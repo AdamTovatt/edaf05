@@ -6,11 +6,10 @@
 3. [Data Structures](#data-structures)
 4. [Greedy Algorithms](#greedy-algorithms)
 5. [Shortest Paths and Minimum Spanning Trees](#shortest-paths-and-minimum-spanning-trees)
-6. [Divide and Conquer](#divide-and-conquer)
+6. [Divide and Conquer and Convex Hull](#divide-and-conquer-and-convex-hull)
 7. [Dynamic Programming](#dynamic-programming)
-8. [Network Flow](#network-flow)
-9. [NP-Completeness](#np-completeness)
-10. [Linear Programming](#linear-programming)
+8. [NP-Completeness](#np-completeness)
+9. [Linear Programming](#linear-programming)
 
 ## Asymptotic Notation
 ### What do O(n), Ω(n), and Θ(n) mean?
@@ -140,6 +139,24 @@ A hash table stores key-value pairs and provides fast lookups. It uses a hash fu
 - When α gets too high, we need to resize the table
 - The choice of maximum α is a trade-off between space and time
 
+### Hollow Heaps
+- A type of heap data structure that supports:
+  * Insert: O(1) amortized time
+  * Delete-min: O(log n) amortized time
+  * Decrease-key: O(1) amortized time
+- Key features:
+  * Multiple root nodes allowed
+  * Nodes can be "hollow" (deleted) or "full" (active)
+  * Links between nodes can be "solid" or "dashed"
+- Operations:
+  * Insert: Create new node and link to existing roots
+  * Delete-min: Remove minimum root, merge its children
+  * Decrease-key: Cut subtree and make it a new root
+- Advantages:
+  * Better theoretical bounds than Fibonacci heaps
+  * Simpler implementation
+  * Good for algorithms needing many decrease-key operations
+
 ### Graph Representations
 There are two main ways to represent a graph:
 
@@ -164,6 +181,19 @@ There are two main ways to represent a graph:
 - List: Less space, better for sparse graphs
 - Choose based on graph density and operations needed
 
+### Bipartite Graphs
+- A graph whose vertices can be divided into two sets
+- No edges between vertices in the same set
+- Applications:
+  * Matching problems
+  * Resource allocation
+  * Job assignments
+- How to check if a graph is bipartite:
+  * Use BFS or DFS with two colors
+  * Color each vertex opposite to its neighbors
+  * If we can't do this, graph isn't bipartite
+  * Time complexity: O(V + E)
+
 ### Depth First Search (DFS)
 - Explores as far as possible along each branch before backtracking
 - Uses a stack (either explicitly or through recursion):
@@ -183,6 +213,17 @@ There are two main ways to represent a graph:
     - Can be found using DFS by:
       * First DFS to get finish times (when we finish exploring all descendants of a vertex)
       * Then DFS on reversed graph in order of finish times (most recently finished first)
+    - Tarjan's Algorithm:
+      * More efficient method using a single DFS pass
+      * Tracks discovery time and low link value for each vertex
+      * Low link = earliest vertex that can be reached from current vertex
+      * When low link equals discovery time, found an SCC
+      * Time complexity: O(V + E)
+      * Space complexity: O(V)
+      * Advantages over Kosaraju's:
+        - No need for second graph traversal
+        - More efficient in practice
+        - Better cache behavior
   * Maze solving
 
 ### Breadth First Search (BFS)
@@ -214,7 +255,15 @@ There are two main ways to represent a graph:
   * Activity selection
 - Proving correctness:
   * Exchange argument: Show that any optimal solution can be transformed into our greedy solution
+    - Assume there's a better solution
+    - Show we can exchange elements to match our greedy solution
+    - Prove this doesn't make the solution worse
+    - Example: In activity selection, if we can swap activities, we can always choose the one that ends first
   * Greedy stays ahead: Show that our greedy solution is always at least as good as any other solution at each step
+    - Show greedy solution is at least as good at each step
+    - Compare with any other solution
+    - Prove it maintains this advantage
+    - Example: In Huffman coding, show greedy choice leads to optimal prefix code
 - Example: Activity Selection
   * Problem: Select maximum number of activities that don't overlap
   * Greedy choice: Always pick the activity with earliest finish time
@@ -318,15 +367,36 @@ There are two main ways to represent a graph:
     - Have exactly one unique path between any two points
 
 ### Union-Find
-- Data structure used to keep track of connected components in a graph
-- Key operations:
-  * Find: Determine which component a vertex belongs to
-  * Union: Connect two components
-- Implementation:
-  * Path compression: Flatten the structure when Find is called
-  * Union by rank: Connect smaller tree under larger tree
-- Time complexity: O(α(n)) where α(n) is the inverse Ackermann function
-  * Nearly constant time for practical graph sizes
+- Data structure for tracking connected components
+- Operations:
+  * Find: Determine which set an element belongs to
+  * Union: Merge two sets
+- Naïve Implementation:
+  * Use arrays to represent parent relationships
+  * Find: Follow parent pointers to root
+  * Union: Make one root point to another
+  * Problems:
+    - Can degenerate into linear chains
+    - Find operations become O(n)
+    - Union operations can be slow
+- Optimized Implementation:
+  * Path Compression:
+    - During Find, make all nodes point directly to root
+    - Flattens the tree structure
+    - Makes future operations faster
+  * Union by Rank:
+    - Keep track of tree heights
+    - Always attach smaller tree to larger one
+    - Prevents linear chains
+  * Time Complexity:
+    - Nearly constant time: O(α(n))
+    - α(n) is inverse Ackermann function
+    - Grows very slowly with n
+- Applications:
+  * Kruskal's algorithm for MST
+  * Connected components in graphs
+  * Image processing
+  * Network connectivity
 
 ## Divide and Conquer and Convex Hull
 ### Divide and Conquer
@@ -407,43 +477,349 @@ There are two main ways to represent a graph:
      * Time: O(n log n)
 
 ### Finding Nearest Points
-- Problem: Find closest pair of points in plane
-- Divide and conquer approach:
-  1. Sort points by x-coordinate
-  2. Divide into left and right halves
-  3. Find closest pairs in each half
-  4. Check points near dividing line
+- Problem: Find the smallest distance between any two points in a 2D plane
+- Divide-and-conquer approach:
+  1. Sort points by x and y coordinates (O(n log n))
+  2. Split points into left and right halves
+  3. Find closest pairs in each half recursively
+  4. Check for closer pairs that cross the dividing line
 - Time complexity: O(n log n)
-- Key insight: Only need to check points within strip of width 2d
-  where d is minimum distance found so far
+  * a = 2 (we split into two subproblems)
+  * b = 2 (each subproblem is half the size)
+  * f(n) = n (we need to check points in the strip)
+  * Using Master Theorem: n^(log_2(2)) = n, and f(n) = n, so we're in case 2
+  * Therefore T(n) = Θ(n log n)
+- Key insight: In the strip around the dividing line, each point only needs to be compared with at most 7 other points
+- Base case: When we have 3 or fewer points, use brute force
 
 ## Dynamic Programming
 ### Main Ideas
-[To be filled with your understanding]
+- What is it?
+  * A way to solve problems by breaking them into smaller subproblems
+  * Key idea: Store solutions to subproblems to avoid solving them again
+  * Like divide-and-conquer, but subproblems overlap
+- When to use it:
+  * When a problem has overlapping subproblems
+    - Example: Fibonacci sequence
+      * To find fib(5), we need fib(4) and fib(3)
+      * To find fib(4), we need fib(3) and fib(2)
+      * To find fib(3), we need fib(2) and fib(1)
+      * Notice how fib(3) and fib(2) are needed multiple times
+      * These are overlapping subproblems - we solve the same problem multiple times
+    - Compare with divide-and-conquer (like merge sort):
+      * In merge sort, we split array into left and right halves
+      * Each half is a unique subproblem - we never solve the same subproblem twice
+      * That's why we don't need to store solutions in divide-and-conquer
+  * When subproblems can be combined to solve the main problem
+  * When we can write a recurrence relation
+- Two approaches:
+  1. Top-down (memoization):
+     * Start with the main problem
+     * Solve subproblems as needed
+     * Store results in a table
+     * Example: Fibonacci with memoization
+  2. Bottom-up (tabulation):
+     * Start with smallest subproblems
+     * Build up to the main problem
+     * Fill a table systematically
+     * Example: Fibonacci with iteration
+- Common patterns:
+  * 1D DP: Array where each cell depends on previous cells
+    - Example: Fibonacci, longest increasing subsequence
+  * 2D DP: Grid where each cell depends on cells above/left
+    - Example: Edit distance, longest common subsequence
+- Steps to solve a DP problem:
+  1. Identify the subproblems
+  2. Write the recurrence relation
+     - A recurrence relation is like a recipe that tells you how to solve a problem using solutions to smaller versions of the same problem
+     - It has two parts:
+       1. The formula that shows how to combine smaller solutions
+       2. The base cases (smallest problems that we can solve directly)
+     - Example 1: Fibonacci
+       * Formula: fib(n) = fib(n-1) + fib(n-2)
+       * Base cases: fib(0) = 0, fib(1) = 1
+     - Example 2: Longest Increasing Subsequence
+       * Formula: lis(i) = 1 + max(lis(j)) where j < i and array[j] < array[i]
+       * Base case: lis(0) = 1
+     - Example 3: Edit Distance
+       * Formula: ed(i,j) = min(
+           ed(i-1,j) + 1,     // delete
+           ed(i,j-1) + 1,     // insert
+           ed(i-1,j-1) + cost // replace
+         )
+       * Base case: ed(0,0) = 0
+  3. Decide on the approach (top-down or bottom-up)
+  4. Implement the solution
+  5. Analyze time and space complexity
 
 ### Sequence Alignment
-[To be filled with your understanding]
+- What is it?
+  * Finding the best way to align two strings by inserting gaps
+  * Used to compare DNA sequences, protein sequences, or text
+  * Goal: Maximize similarity or minimize cost of alignment
+- How it works:
+  * Use dynamic programming with a 2D table
+  * Each cell (i,j) represents best alignment of first i characters of string 1 and first j characters of string 2
+  * For each cell, consider three options:
+    1. Match/mismatch: align current characters
+    2. Gap in first string: skip character in string 1
+    3. Gap in second string: skip character in string 2
+- Time complexity: O(N × M) where N and M are string lengths
+  * Need to fill entire table
+  * Each cell takes constant time to compute
+- Applications:
+  * Bioinformatics: comparing DNA or protein sequences
+  * Text processing: finding similar words or documents
+  * Version control: finding differences between files
+- Cost matrix:
+  * Defines cost of matching/mismatching characters
+  * Can represent biological likelihoods or edit costs
+  * Example: matching 'A' with 'A' might cost less than matching 'A' with 'B'
 
-## Network Flow
-### Ford-Fulkerson Algorithm
-- Main ideas
-- Time complexity
-
-### Bipartite Graph Matching
-[To be filled with your understanding]
+### Network Flow
+- What is it?
+  * A directed graph where each edge has a capacity
+  * Has a source node (where flow starts) and a sink node (where flow ends)
+  * Goal: Find maximum amount of flow from source to sink
+- Applications:
+  * Finding maximum matching in bipartite graphs
+  * Finding maximum number of edge-disjoint paths
+  * Modeling traffic flow in networks
+  * Finding minimum cut in a graph
+  * Modeling water pipes and electrical systems
+  * Ecological applications (nutrient flow)
+- Ford-Fulkerson Algorithm:
+  * Main idea: Keep finding paths with available capacity and add flow
+  * Steps:
+    1. Start with zero flow
+    2. Find a path from source to sink with available capacity
+    3. Add flow along this path
+    4. Update residual capacities
+    5. Repeat until no more paths exist
+  * Residual graph:
+    - Forward edges: remaining capacity
+    - Backward edges: current flow (can be "undone")
+  * Time complexity: O(E × max_flow)
+    - E is number of edges
+    - max_flow is the maximum possible flow
+    - Each path finding takes O(E) time
+    - We might need to find max_flow paths
+  * Why it works:
+    - Always finds maximum flow
+    - Can "undo" flow using backward edges
+    - Stops when no more paths exist (minimum cut)
+- Goldberg-Tarjan (Push-Relabel) Algorithm:
+  * Different approach: works with node heights and excess flow
+  * Key components:
+    - Height labels for nodes
+    - Excess flow at each node
+    - Push flow to lower neighbors
+    - Relabel nodes when stuck
+  * Time complexity: O(V² × E)
+    - V is number of vertices
+    - E is number of edges
+    - Better than Ford-Fulkerson for large capacities
+  * Advantages:
+    - Pushes full available flow in each step
+    - Not affected by large edge capacities
+    - Often faster in practice
+- Handling Large Capacities:
+  * Why Ford-Fulkerson can be slow:
+    - Basic version increments flow by 1 unit at a time
+    - With large capacities (e.g., 1,000,000), needs many iterations
+    - Example: If max flow is 1,000,000, might need 1,000,000 iterations
+  * Solutions:
+    - Capacity scaling: Start with large steps, then refine
+      * Begin with largest power of 2 less than max capacity
+      * Halve the step size each iteration
+      * Reduces iterations from O(max_flow) to O(log max_flow)
+    - Use Push-Relabel algorithm instead
+      * Pushes full available capacity in each step
+      * Not affected by size of capacities
+    - Use binary search over possible flow values
+  * When to use which algorithm:
+    - Ford-Fulkerson with capacity scaling:
+      * Good for sparse graphs
+      * Easy to implement
+      * Works well with small to medium capacities
+    - Push-Relabel:
+      * Better for dense graphs
+      * Better for very large capacities
+      * More complex to implement
+      * Often faster in practice
 
 ## NP-Completeness
-### Complexity Classes
-[To be filled with your understanding]
+### What are Complexity Classes?
+* Groups of problems that are similar in how hard they are to solve
+* "Hard" means how much time or memory they need
+* Problems in the same class can be solved in similar ways
+* Like sorting problems by difficulty level
 
-### Key Problems
-- Vertex Cover
-- Independent Set
-- Set Cover
-- Traveling Salesperson Problem
-- Graph Coloring
+### Complexity Classes:
+* P: Problems that can be solved in polynomial time
+  - Example: Sorting, shortest path
+* NP: "Nondeterministic Polynomial time"
+  - Problems where solutions can be verified in polynomial time
+  - If we could "guess" the right answer, we could verify it quickly
+  - Example: Given a path, can verify if it's a Hamiltonian cycle
+* NP-complete: Hardest problems in NP
+  - If we could solve any NP-complete problem quickly, we could solve all NP problems quickly
+  - No known polynomial-time solution exists
+
+### Common NP-complete Problems (Grade 3):
+- Vertex Cover:
+  - Find smallest set of vertices that covers all edges
+  - Each edge must touch at least one vertex in the set
+  - Example: In a network, find minimum servers to monitor all connections
+- Independent Set:
+  - Find largest set of vertices with no edges between them
+  - No two vertices in the set can be connected
+  - Example: Find maximum number of non-conflicting tasks
+- Set Cover:
+  - Given a collection of sets, find smallest number of sets that cover all elements
+  - Each element must be in at least one chosen set
+  - Example: Choose minimum number of radio stations to cover all cities
+- Traveling Salesman Problem (TSP):
+  - Find shortest route visiting all cities
+  - Must visit each city exactly once
+  - Example: Optimize delivery route for a truck
+- Graph Coloring:
+  - Color vertices so no adjacent vertices have same color
+  - Find minimum number of colors needed
+  - Example: Schedule exams so no student has two exams at same time
+
+### How to prove a problem is NP-complete:
+1. Show it's in NP:
+  * Given a solution, can verify it's correct in polynomial time
+  * Example: For vertex cover, can check if chosen vertices cover all edges
+2. Show it's NP-hard:
+  * Take a known NP-complete problem
+  * Show how to convert any instance of that problem into an instance of your problem
+  * The conversion must take polynomial time
+
+### Why it matters:
+- If a problem is NP-complete, we probably can't find an efficient solution
+- Instead, we need to use:
+  - Approximation algorithms
+  - Heuristics
+  - Special cases
+  - Exponential-time algorithms for small inputs
+
+### First NP-Complete Problem
+- Boolean Satisfiability (SAT) was the first problem proven NP-complete
+- Problem: Given a boolean formula, is there an assignment of true/false that makes it true?
+- Cook-Levin Theorem:
+  * Proved SAT is NP-complete
+  * Showed any NP problem can be reduced to SAT
+  * Established foundation for NP-completeness theory
+- Importance:
+  * First concrete example of NP-complete problem
+  * Used to prove other problems NP-complete
+  * Basis for many practical applications
+
+### Hamiltonian Cycle
+- Problem: Find a cycle that visits each vertex exactly once
+- NP-completeness proof:
+  * Reduce from 3-SAT
+  * Create gadget for each variable and clause
+  * Show satisfiable if and only if Hamiltonian cycle exists
+- Applications:
+  * Circuit board testing
+  * Genome sequencing
+  * Network routing
+
+### SAT Solvers
+- Algorithms to solve boolean satisfiability problems
+- Unit Propagation:
+  * If a clause has only one literal, that literal must be true
+  * Example: If (A ∨ B ∨ C) and A=false, B=false, then C must be true
+  * Used to simplify formula and find forced assignments
+- Applications:
+  * Hardware verification
+  * Software testing
+  * Planning problems
+
+### Convex Hull
+// ... existing code ...
+
+### Preparata-Hong Algorithm
+- Divide-and-conquer algorithm for 3D convex hull
+- Process:
+  * Split points into two halves
+  * Find hulls recursively
+  * Merge hulls by finding "bridge" edges
+- Time complexity: O(n log n)
+- Advantages:
+  * Works in 3D
+  * Efficient merging step
+  * Good for parallel implementation
+- Applications:
+  * 3D modeling
+  * Computer graphics
+  * Collision detection
 
 ## Linear Programming
 ### Linear and Integer Linear Programming
-- Main ideas
-[To be filled with your understanding] 
+- What is Linear Programming?
+  * A method to find the best outcome in a mathematical model
+  * The model has linear relationships (straight lines)
+  * Goal: Maximize or minimize a linear objective function
+  * Subject to linear constraints (inequalities)
+
+- Key Components:
+  * Variables: What we're trying to find (x₁, x₂, ...)
+  * Objective Function: What we want to maximize/minimize
+  * Constraints: Limits on the variables
+  * Feasible Region: All points that satisfy the constraints
+
+- Example Problem:
+  * Maximize: 3x + 2y
+  * Subject to:
+    - x + y ≤ 10
+    - 2x + y ≤ 15
+    - x ≥ 0
+    - y ≥ 0
+
+- Solving Methods:
+  * Simplex Algorithm:
+    - Moves along edges of feasible region
+    - Stops at optimal vertex
+    - Time complexity: Usually polynomial, but can be exponential
+  * Interior Point Methods:
+    - Moves through interior of feasible region
+    - Often faster for large problems
+    - Polynomial time complexity
+
+- Integer Linear Programming (ILP):
+  * Same as LP but variables must be integers
+  * Much harder to solve than regular LP
+  * Applications:
+    - Scheduling problems
+    - Resource allocation
+    - Network design
+  * Solving Methods:
+    - Branch and Bound
+    - Cutting Plane
+    - Often use LP relaxation as starting point
+
+- Applications:
+  * Resource allocation
+  * Production planning
+  * Transportation problems
+  * Network flow optimization
+  * Portfolio optimization
+  * Diet problems
+  * Game theory
+
+- Duality:
+  * Every LP has a dual problem
+  * Dual of maximization is minimization
+  * Dual of constraints are variables
+  * Strong duality: Optimal values are equal
+  * Weak duality: Dual gives bound on primal
+
+- Sensitivity Analysis:
+  * How changes in parameters affect solution
+  * Shadow prices: Value of relaxing constraints
+  * Range of validity for current solution
+  * Important for real-world applications 
