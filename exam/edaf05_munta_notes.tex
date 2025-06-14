@@ -523,6 +523,182 @@ A hash table stores key-value pairs and provides fast lookups. It uses a hash fu
     \item \textbf{A:} Yes. Because they only care about the relative ordering of edge weights when choosing which edges to add to the tree, not their absolute values. The minimum spanning tree will still be found correctly regardless of whether the weights are positive or negative.
 \end{itemize}
 
+\section{Divide and Conquer \& Convex Hull}
+\subsection{Divide and Conquer}
+\begin{itemize}
+    \item Key steps:
+    \begin{itemize}
+        \item Divide: Split problem into smaller instances
+        \item Conquer: Solve subproblems recursively
+        \item Combine: Merge solutions into final answer
+    \end{itemize}
+    \item Common examples include merge sort, quick sort, binary search, and finding closest pair of points
+    \item Master Theorem:
+    \begin{itemize}
+        \item When we solve a problem by breaking it into smaller pieces, we often get a pattern like:
+        \begin{itemize}
+            \item To solve a problem of size $n$, we need to solve some number of subproblems (let's call this number $a$)
+            \item Each of these subproblems is of size $n/b$ (where $b$ is how much we divide the problem size by)
+            \item Plus we need to do some extra work $f(n)$ to combine the results
+        \end{itemize}
+        \item This pattern is called a recurrence relation
+        \item Example: In merge sort:
+        \begin{itemize}
+            \item We split array in half (so $b = 2$, because we divide size by 2)
+            \item We solve two subproblems (so $a = 2$):
+            \begin{itemize}
+                \item Sort the left half of the array
+                \item Sort the right half of the array
+            \end{itemize}
+            \item We merge the sorted halves (which takes $n$ time, so $f(n) = n$)
+            \item So $T(n) = 2T(n/2) + n$
+        \end{itemize}
+        \item Different example: In binary search:
+        \begin{itemize}
+            \item We split array in half (so $b = 2$)
+            \item We solve only one subproblem (so $a = 1$):
+            \begin{itemize}
+                \item Search in either the left half OR the right half
+                \item We don't need to search both halves because we can determine which half to look in
+            \end{itemize}
+            \item We do constant work to compare and choose which half (so $f(n) = 1$)
+            \item So $T(n) = T(n/2) + 1$
+        \end{itemize}
+        \item The Master Theorem formula:
+        \begin{itemize}
+            \item If $T(n) = aT(n/b) + f(n)$ where:
+            \begin{itemize}
+                \item $a \geq 1$ (we must have at least one subproblem)
+                \item $b > 1$ (we must divide the problem into smaller pieces)
+                \item $f(n)$ is asymptotically positive ($f(n)$ is positive for most values of $n$, especially the large ones we care about)
+            \end{itemize}
+            \item Then $T(n)$ is one of these three cases:
+            \begin{itemize}
+                \item If the extra work $f(n)$ is much smaller than $n^{\log_b(a)}$, then $T(n) = \Theta(n^{\log_b(a)})$
+                \item If the extra work $f(n)$ is about the same size as $n^{\log_b(a)}$, then $T(n) = \Theta(n^{\log_b(a)} \log n)$
+                \item If the extra work $f(n)$ is much larger than $n^{\log_b(a)}$, then $T(n) = \Theta(f(n))$
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Convex Hull}
+\begin{itemize}
+    \item Smallest convex polygon containing all points
+    \item Properties:
+    \begin{itemize}
+        \item All points lie on or inside the hull
+        \item No interior angles $>$ 180\textdegree
+        \item Minimum perimeter enclosing all points
+    \end{itemize}
+    \item Algorithms:
+    \begin{itemize}
+        \item Jarvis March (Gift Wrapping):
+        \begin{itemize}
+            \item Take the leftmost point as starting point and imagine a horizontal line to the right from it
+            \item For each other point, draw a line from the starting point to this other point
+            \item Measure the angle between the horizontal line and this new line
+            \item Take the other point that creates the largest counterclockwise angle with the horizontal line and consider it part of the hull, the edge to it is the new "current edge"
+            \item For each subsequent point on the hull:
+            \begin{itemize}
+                \item Find the point that makes the largest counterclockwise angle with the current edge
+                \item This is done by comparing angles between the current edge and all other points
+                \item The point with the largest angle will be the next point on the hull and the edge to it the new "current edge"
+            \end{itemize}
+            \item Continue until we return to the starting point
+            \item Time: $O(nh)$ where $n$ is the total number of points and $h$ is number of points on the hull
+            \item Worst case: $O(n^2)$ when all points are on the hull (i.e., when $h = n$)
+            \item Optimization: We don't actually need to calculate angles. Instead, we can use cross products to determine which point makes the largest counterclockwise turn. For points A, B, C: if cross product $(B-A) \times (C-A)$ is positive, C is counterclockwise from B and so on.
+        \end{itemize}
+        \item Graham Scan:
+        \begin{itemize}
+            \item Sort points by polar angle
+            \item Use stack to build hull
+            \item Time: $O(n \log n)$ due to sorting
+        \end{itemize}
+        \item Preparata-Hong:
+        \begin{itemize}
+            \item Divide-and-conquer algorithm for 3D convex hull
+            \item Process:
+            \begin{itemize}
+                \item Split points into two halves
+                \item Find hulls recursively
+                \item Merge hulls by finding ``bridge'' edges
+            \end{itemize}
+            \item Time complexity: $O(n \log n)$
+            \item Advantages:
+            \begin{itemize}
+                \item Works in 3D
+                \item Efficient merging step
+                \item Good for parallel implementation
+            \end{itemize}
+            \item Applications:
+            \begin{itemize}
+                \item 3D modeling
+                \item Computer graphics
+                \item Collision detection
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+    \item Applications:
+    \begin{itemize}
+        \item Collision detection
+        \item Path planning
+        \item Pattern recognition
+        \item Computer graphics
+    \end{itemize}
+    \item Base case: When we have 3 or fewer points, use brute force
+\end{itemize}
+
+\subsection{Finding Nearest Points}
+\begin{itemize}
+    \item Problem: Find the smallest distance between any two points in a 2D plane
+    \item Divide-and-conquer approach:
+    \begin{itemize}
+        \item Sort points by $x$ and $y$ coordinates ($O(n \log n)$)
+        \item Split points into left and right halves
+        \item Find closest pairs in each half recursively
+        \item Check for closer pairs that cross the dividing line
+    \end{itemize}
+    \item Time complexity: $O(n \log n)$
+    \begin{itemize}
+        \item $a = 2$ (we split into two subproblems)
+        \item $b = 2$ (each subproblem is half the size)
+        \item $f(n) = n$ (we need to check points in the strip)
+        \item Using Master Theorem: $n^{\log_2(2)} = n$, and $f(n) = n$, so we're in case 2
+        \item Therefore $T(n) = \Theta(n \log n)$
+    \end{itemize}
+    \item Key insight: In the strip around the dividing line, each point only needs to be compared with at most 7 other points
+    \item Base case: When we have 3 or fewer points, use brute force
+\end{itemize}
+
+\subsection{Example Questions}
+\begin{itemize}
+    \item \textbf{Q:} Explain what is meant by a divide-and-conquer algorithm.
+    \item \textbf{A:} Divide the problem into smaller subproblems, solve them recursively, and combine their solutions to solve the original problem.
+
+    \item \textbf{Q:} Explain what the Master theorem is about.
+    \item \textbf{A:} The Master theorem provides a way to solve recurrence relations of the form $T(n) = aT(n/b) + f(n)$ by comparing the growth of $f(n)$ with $n^{\log_b(a)}$.
+
+    \item \textbf{Q:} What is a convex hull?
+    \item \textbf{A:} The smallest convex polygon containing all points, with no interior angles greater than 180 degrees.
+
+    \item \textbf{Q:} Explain the Graham scan algorithm.
+    \item \textbf{A:} Graham scan sorts points by polar angle, then uses a stack to build the hull by removing points that create concave angles.
+
+    \item \textbf{Q:} Explain the main ideas of the Preparata-Hong algorithm.
+    \item \textbf{A:} Preparata-Hong is a divide-and-conquer algorithm for 3D convex hull that splits points, finds hulls recursively, and merges them efficiently.
+
+    \item \textbf{Q:} Why is it important to compare either $\alpha$ or $\beta$ with $\gamma$ first in different situations? What is likely to happen otherwise?
+    \item \textbf{A:} When doing geometric computations, especially with floating-point numbers, the order of comparisons can affect numerical stability. For example, when comparing three angles $\alpha$, $\beta$, and $\gamma$, we should always compare them in a consistent order (like always comparing $\alpha$ with $\gamma$ first, then $\beta$ with $\gamma$). This helps avoid floating-point errors that can occur due to different orders of operations. If we don't maintain a consistent order, we might get different results for the same geometric situation due to rounding errors in floating-point arithmetic.
+
+    \item \textbf{Q:} How can you know if a point p is between q and r on a line?
+    \item \textbf{A:} Use cross product to check collinearity and dot product to check if p is between q and r on the line.
+
+    \item \textbf{Q:} How can you know the direction (left, right, or straight) when going from a point pr through ps to pt?
+    \item \textbf{A:} Use the cross product of vectors ps-pr and pt-ps; positive means left turn, negative means right turn, zero means straight.
+\end{itemize}
+
 \end{multicols}
 
 \end{document} 
