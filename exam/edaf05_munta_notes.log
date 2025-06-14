@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.6.14)  14 JUN 2025 19:56
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.6.14)  14 JUN 2025 20:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -416,7 +416,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 
 [10]
-Underfull \hbox (badness 10000) in paragraph at lines 1018--1019
+Underfull \hbox (badness 10000) in paragraph at lines 1045--1046
 []\T1/cmr/m/n/10.95 Reduces it-er-a-tions from $\OML/cmm/m/it/10.95 O\OT1/cmr/m
 /n/10.95 ([])$ \T1/cmr/m/n/10.95 to
  []
@@ -445,9 +445,15 @@ Underfull \hbox (badness 10000) in paragraph at lines 1018--1019
 
 
 
+[14]
 
 
-[14] (edaf05_munta_notes.aux)
+
+
+
+
+
+[15] (edaf05_munta_notes.aux)
  ***********
 LaTeX2e <2025-06-01>
 L3 programming layer <2025-05-26>
@@ -456,11 +462,11 @@ L3 programming layer <2025-05-26>
 Here is how much of TeX's memory you used:
  4877 strings out of 468224
  72456 string characters out of 5433436
- 507958 words of memory out of 5000000
+ 507965 words of memory out of 5000000
  33348 multiletter control sequences out of 15000+600000
  640287 words of font info for 74 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,5n,65p,1209b,946s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,5n,65p,1209b,995s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\Adam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1
 095.pk> <C:\Users\Adam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
 ecbx1095.pk> <C:\Users\Adam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dp
@@ -477,9 +483,9 @@ dam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/U
 sers/Adam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb
 ><C:/Users/Adam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cm
 sy10.pfb>
-Output written on edaf05_munta_notes.pdf (14 pages, 244205 bytes).
+Output written on edaf05_munta_notes.pdf (15 pages, 249814 bytes).
 PDF statistics:
- 396 PDF objects out of 1000 (max. 8388607)
+ 402 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

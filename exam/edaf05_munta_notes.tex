@@ -230,6 +230,15 @@
     \item Time Complexity: O($\alpha$(n)) where $\alpha$ is the inverse Ackermann function (a function that grows so slowly it's practically constant)
 \end{itemize}
 
+\subsection{Example Questions}
+\begin{itemize}
+    \item \textbf{Q:} What can make the naïve version of union-find slow?
+    \item \textbf{A:} The naïve version can degenerate into linear chains, making find operations O(n) and union operations potentially slow.
+
+    \item \textbf{Q:} Explain how union-find can be made faster than as in the naïve version.
+    \item \textbf{A:} Use path compression (make all nodes point directly to root during find) and union by rank (attach smaller tree to larger one) to achieve nearly constant time operations.
+\end{itemize}
+
 \subsection{Hash Tables}
 A hash table stores key-value pairs and provides fast lookups. It uses a hash function to convert keys into array indices.
 
@@ -368,6 +377,9 @@ A hash table stores key-value pairs and provides fast lookups. It uses a hash fu
 
     \item \textbf{Q:} Why does BFS guarantee the shortest path in an unweighted graph?
     \item \textbf{A:} BFS explores vertices in order of their distance from the start vertex. When it first visits a vertex, it must be through the shortest path because any longer path would have to go through vertices that haven't been visited yet.
+
+    \item \textbf{Q:} What does it mean that a directed graph is strongly connected, and how can you use BFS to determine if a graph is strongly connected?
+    \item \textbf{A:} A graph is strongly connected if every vertex can reach every other vertex; use BFS from any vertex, then reverse all edges and do BFS again from the same vertex - if all vertices are reachable in both cases, the graph is strongly connected.
 \end{itemize}
 
 \section{Greedy Algorithms}
@@ -412,6 +424,12 @@ There are two main approaches to prove a greedy algorithm is correct:
     \item Problem: Select maximum number of activities that don't overlap
     \item Greedy choice: Always pick the activity with earliest finish time
     \item Why it works: Leaves maximum time for remaining activities
+\end{itemize}
+
+\subsection{Example Questions}
+\begin{itemize}
+    \item \textbf{Q:} Suppose you have invented a greedy algorithm that finds an optimal solution to a problem. Explain two approaches to prove its output really is optimal.
+    \item \textbf{A:} Use an exchange argument to show any optimal solution can be transformed into the greedy solution, or use greedy stays ahead to show the greedy solution is always at least as good as any other solution at each step.
 \end{itemize}
 
 \section{Shortest Paths and MSTs}
@@ -534,6 +552,21 @@ There are two main approaches to prove a greedy algorithm is correct:
 
 \subsection{Example Questions}
 \begin{itemize}
+    \item \textbf{Q:} Explain how Tarjan's algorithm can find the strongly connected components in a directed graph.
+    \item \textbf{A:} Tarjan's algorithm uses a single DFS pass, tracking discovery time and low link values to identify SCCs when a vertex's low link equals its discovery time.
+
+    \item \textbf{Q:} What is a bipartite graph, and how can you determine if a graph is bipartite?
+    \item \textbf{A:} A bipartite graph can be divided into two sets with no edges within the same set; use BFS or DFS with two colors, coloring each vertex opposite to its neighbors.
+
+    \item \textbf{Q:} Explain how Dijkstra's algorithm works and why it is correct.
+    \item \textbf{A:} Dijkstra's algorithm always processes the vertex with smallest known distance, updating distances to neighbors; it's correct because once a vertex is processed, its distance cannot be improved.
+
+    \item \textbf{Q:} Explain how the Bellman-Ford algorithm works and why it is correct.
+    \item \textbf{A:} Bellman-Ford relaxes all edges V-1 times; it's correct because the longest possible shortest path has V-1 edges, and after V-1 iterations, all distances must be correct.
+
+    \item \textbf{Q:} What is a safe edge for miminum spanning trees?
+    \item \textbf{A:} A safe edge is one that can be added to the current partial MST without creating a cycle and is part of some MST of the graph.
+    
     \item \textbf{Q:} Why does Dijkstra's algorithm only work with non-negative edge weights?
     \item \textbf{A:} With negative weights, the "greedy" choice of always taking the shortest path might not be optimal. A longer path with negative edges could actually be shorter than a direct path with positive edges.
 
@@ -554,12 +587,6 @@ There are two main approaches to prove a greedy algorithm is correct:
 
     \item \textbf{Q:} What happens if an included edge collapses in real applications?
     \item \textbf{A:} The network becomes disconnected since it's already the minimal amount of edges possible.
-
-    \item \textbf{Q:} What's the main difference between Prim's and Kruskal's algorithms?
-    \item \textbf{A:} Prim's grows a single tree by always adding the cheapest edge that connects to a new vertex, while Kruskal's builds multiple trees and merges them by adding the cheapest edge that doesn't create a cycle (aka doesn't connect two vertices in the same tree).
-
-    \item \textbf{Q:} Why do we need the Union-Find data structure in Kruskal's algorithm?
-    \item \textbf{A:} Union-Find efficiently tracks which vertices are connected, allowing us to quickly check if adding an edge would create a cycle. Without it, we'd need to do a full graph traversal to check for cycles, which would be much slower.
 
     \item \textbf{Q:} What happens if the graph is disconnected? Can Kruskal's still find an MST?
     \item \textbf{A:} The algorithm will naturally handle disconnected components by not adding edges between them creating a collection of MSTs
@@ -1065,6 +1092,45 @@ $O(V^2 \times E)$ where:
     \item \textbf{A:} A maximum matching is the largest possible set of edges where no two edges share a vertex. A perfect matching is a maximum matching where every vertex is matched (only possible if both groups have the same size).
 \end{itemize}
 
+\section{Hollow Heap}
+\subsection{Understanding Amortized Time}
+Amortized time complexity is a way to analyze the average time per operation over a sequence of operations. While some individual operations might be expensive, the total cost is spread out (amortized) across all operations.
+
+\subsection{Overview}
+A type of heap data structure that supports:
+\begin{itemize}
+    \item Insert: O(1) amortized time
+    \item Delete-min: O(log n) amortized time
+    \item Decrease-key: O(1) amortized time
+\end{itemize}
+
+\subsection{Key Features}
+\begin{itemize}
+    \item Multiple root nodes allowed
+    \item Nodes can be "hollow" (deleted) or "full" (active)
+    \item Links between nodes can be "solid" or "dashed"
+\end{itemize}
+
+\subsection{Operations}
+\begin{itemize}
+    \item \textbf{Insert:} Create new node and link to existing roots
+    \item \textbf{Delete-min:} Remove minimum root, merge its children
+    \item \textbf{Decrease-key:} Cut subtree and make it a new root
+\end{itemize}
+
+\subsection{Advantages}
+\begin{itemize}
+    \item Better theoretical bounds than Fibonacci heaps
+    \item Simpler implementation
+    \item Good for algorithms needing many decrease-key operations
+\end{itemize}
+
+\subsection{Example Questions}
+\begin{itemize}
+    \item \textbf{Q:} Explain how hollow heaps work. Focus on the simplest version with multiple root nodes.
+    \item \textbf{A:} In the simplest version, hollow heaps maintain multiple root nodes where each root represents a potential minimum. Nodes can be either full (active) or hollow (deleted). When inserting, we create a new root. For decrease-key, we cut the subtree and make it a new root. Delete-min removes the minimum root and merges its children. The structure uses both solid and dashed links to maintain efficiency, with solid links forming the main structure and dashed links helping with decrease-key operations.
+\end{itemize}
+
 \section{NP-Completeness}
 \subsection{Polynomial Time}
 Polynomial time means the time needed to solve the problem grows as a polynomial function of the input size.
@@ -1135,6 +1201,17 @@ Complexity classes are groups of problems that are similar in how hard they are 
     \item Example: Schedule exams so no student has two exams at same time
 \end{itemize}
 
+\subsection{SAT Solvers}
+\begin{itemize}
+    \item Algorithms to solve boolean satisfiability problems
+    \item Unit Propagation:
+    \begin{itemize}
+        \item If a clause has only one literal, that literal must be true
+        \item Example: If (A $\lor$ B $\lor$ C) and A=false, B=false, then C must be true
+        \item Used to simplify formula and find forced assignments
+    \end{itemize}
+\end{itemize}
+
 \subsection{Proving NP-completeness}
 \subsubsection{Two Steps}
 \begin{enumerate}
@@ -1202,7 +1279,11 @@ Complexity classes are groups of problems that are similar in how hard they are 
     \item \textbf{A:} We can use approximation algorithms to get good (but not optimal) solutions, heuristics to find solutions quickly, or exact algorithms for small instances. The choice depends on whether we need optimal solutions and how large our inputs are.
 
     \item \textbf{Q:} Why can't we solve Set Cover by just picking sets that cover the most uncovered elements?
-    \item \textbf{A:} This greedy approach doesn't always find the optimal solution. Sometimes picking a set that covers fewer elements now leads to a better overall solution later. For example, with elements {1,2,3,4,5} and sets A={1,2,3}, B={2,3,4}, C={3,4,5}, D={1,4,5}, the greedy approach might pick 3 sets while the optimal solution uses just 2 sets.
+    \item \textbf{A:} This greedy approach doesn't always find the optimal solution. Sometimes picking a set that covers fewer elements now leads to a better overall solution later. For example, with elements \{1,2,3,4,5\} and sets A=\{1,2,3\}, B=\{2,3,4\}, C=\{3,4,5\}, D=\{1,4,5\}, the greedy approach might pick 3 sets while the optimal solution uses just 2 sets.
+
+    \item \textbf{Q:} Explain what unit propagation in SAT-solvers mean.
+    \item \textbf{A:} Unit propagation is a simplification technique in SAT solvers where if a clause has only one remaining unassigned literal (all others are false), that literal must be true to satisfy the clause.
+    For example, in the clause (A $\lor$ B $\lor$ C), if A=false and B=false, then C must be true. This allows the solver to make forced assignments and simplify the formula, often leading to a cascade of other forced assignments.
 \end{itemize}
 
 \section{Linear Programming}
