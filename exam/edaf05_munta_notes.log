@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.6.14)  14 JUN 2025 20:22
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.6.14)  14 JUN 2025 20:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -317,19 +317,19 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
-* h-part:(L,W,R)=(28.90755pt, 539.69278pt, 28.90755pt)
-* v-part:(T,H,B)=(28.90755pt, 787.23175pt, 28.90755pt)
+* h-part:(L,W,R)=(36.135pt, 525.23788pt, 36.135pt)
+* v-part:(T,H,B)=(36.135pt, 772.77686pt, 36.135pt)
 * \paperwidth=597.50787pt
 * \paperheight=845.04684pt
-* \textwidth=539.69278pt
-* \textheight=787.23175pt
-* \oddsidemargin=-43.36244pt
-* \evensidemargin=-43.36244pt
-* \topmargin=-80.36244pt
+* \textwidth=525.23788pt
+* \textheight=772.77686pt
+* \oddsidemargin=-36.135pt
+* \evensidemargin=-36.135pt
+* \topmargin=-73.135pt
 * \headheight=12.0pt
 * \headsep=25.0pt
 * \topskip=11.0pt
-* \footskip=30.0pt
+* \footskip=12.0pt
 * \marginparwidth=50.0pt
 * \marginparsep=10.0pt
 * \columnsep=10.0pt
@@ -462,11 +462,11 @@ L3 programming layer <2025-05-26>
 Here is how much of TeX's memory you used:
  4877 strings out of 468224
  72456 string characters out of 5433436
- 507965 words of memory out of 5000000
+ 514952 words of memory out of 5000000
  33348 multiletter control sequences out of 15000+600000
  640287 words of font info for 74 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,5n,65p,1209b,995s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,5n,65p,1209b,976s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\Adam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1
 095.pk> <C:\Users\Adam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
 ecbx1095.pk> <C:\Users\Adam\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dp
@@ -483,7 +483,7 @@ dam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/U
 sers/Adam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb
 ><C:/Users/Adam/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cm
 sy10.pfb>
-Output written on edaf05_munta_notes.pdf (15 pages, 249814 bytes).
+Output written on edaf05_munta_notes.pdf (15 pages, 250001 bytes).
 PDF statistics:
  402 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
