@@ -1,0 +1,528 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{multicol}
+\usepackage{titlesec}
+\geometry{a4paper, margin=0.4in}
+
+% Adjust spacing for sections and subsections
+\titlespacing{\section}{0pt}{12pt}{4pt}
+\titlespacing{\subsection}{0pt}{10pt}{3pt}
+
+% Make itemize environments more compact
+\usepackage{enumitem}
+\setlist[itemize]{topsep=0pt, itemsep=0pt, parsep=0pt, leftmargin=*}
+
+\title{EDAF05 Munta Notes}
+\author{Adam Tovatt}
+\date{2025-06-14}
+
+% Redefine maketitle to be smaller and left-aligned
+\makeatletter
+\renewcommand{\maketitle}{%
+  \begin{flushleft}
+    {\large\bfseries\@title}\hspace{1em}{\small\@author}\hspace{1em}{\small\@date}
+  \end{flushleft}
+  \vspace{0.5em}
+}
+\makeatother
+
+\begin{document}
+
+\maketitle
+
+\begin{multicols}{2}
+\section{Asymptotic Notation}
+\subsection{What do O(n), $\Omega$(n), and $\Theta$(n) mean?}
+
+1. \textbf{O(n) - Big O Notation}
+\begin{itemize}
+    \item Tells us "it will never be slower than this" - upper bound on growth rate. Example: 2n + 3 is O(n) because it grows linearly
+\end{itemize}
+
+2. \textbf{$\Omega$(n) - Big Omega Notation}
+\begin{itemize}
+    \item Tells us "it will never be faster than this" - lower bound on growth rate. Example: 2n + 3 is $\Omega$(n) because it can't grow slower than linear
+\end{itemize}
+
+3. \textbf{$\Theta$(n) - Big Theta Notation}
+\begin{itemize}
+    \item Tells us "it will always be exactly this" - tight bound. Example: 2n + 3 is $\Theta$(n) because it's both O(n) and $\Omega$(n)
+\end{itemize}
+
+\subsection{Real Examples}
+\begin{itemize}
+    \item \textbf{Bubble Sort}: Best $\Theta$(n), Worst/Avg $\Theta$(n$^2$)
+    \item \textbf{Binary Search}: Best O(1), Worst $\Theta$(log n)
+    \item \textbf{Linear Search}: Best O(1), Worst $\Theta$(n)
+\end{itemize}
+
+\subsection{Important Notes}
+\begin{itemize}
+    \item O notation can describe any bound (worst, best, or average case) - we must specify which case we're analyzing. Often it could be the worst case for an algorithm if nothing else is specified.
+    \item We can use $\Theta$ to describe an algorithm's complexity if all its executions fall within $\Theta(f(n))$, even if theoretical best/worst cases differ
+    \item The key is whether the actual running time is tightly bounded, not whether best/worst cases are identical
+\end{itemize}
+
+\subsection{Common Time Complexities}
+\begin{itemize}
+    \item O(1): Constant (array access), O(log n): Logarithmic (binary search)
+    \item O(n): Linear (linear search), O(n log n): Linearithmic (merge sort)
+    \item O(n$^2$): Quadratic (bubble sort), O($2^n$): Exponential (recursive Fibonacci)
+\end{itemize}
+
+\subsection{Space Complexity}
+\begin{itemize}
+    \item Similar to time complexity but for memory usage. Example: O(n) space = memory proportional to input size
+\end{itemize}
+
+\subsection{Example Questions}
+\begin{itemize}
+    \item \textbf{Q:} Explain what O(n), $\Omega$(n), and $\Theta$(n) mean.
+    \item \textbf{A:} O(n) is an upper bound (never grows faster), $\Omega$(n) is a lower bound (never grows slower), and $\Theta$(n) means both bounds are tight (grows exactly at that rate).
+
+    \item \textbf{Q:} Explain the difference between O(n) and $\Theta$(n) using a concrete example.
+    \item \textbf{A:} Consider linear search: it's O(n) because it never takes more than n steps, but it's not $\Theta$(n) because in the best case (element found first) it takes O(1) time. For an example of $\Theta$(n), consider a loop that always processes each element exactly once.
+
+    \item \textbf{Q:} Why might an algorithm have different time complexities for its best and worst cases? Give an example.
+    \item \textbf{A:} Algorithms often have early exit conditions or different paths based on input. For example, linear search is O(1) in best case (element found first) but $\Theta$(n) in worst case (element not found or found last) because it might find the element immediately or need to check every position.
+
+    \item \textbf{Q:} How can you determine if an algorithm's time complexity is $\Theta$(n) rather than just O(n)?
+    \item \textbf{A:} To prove $\Theta$(n), you need to show both O(n) and $\Omega$(n). This means proving the algorithm never takes more than cn steps (O(n)) AND never takes fewer than dn steps ($\Omega$(n)) for some constants c and d. For example, a loop that always processes each element exactly once is $\Theta$(n) because it takes exactly n steps.
+
+    \item \textbf{Q:} Explain why we often focus on worst-case analysis when using O notation.
+    \item \textbf{A:} Worst-case analysis gives us a guarantee that the algorithm will never perform worse than the bound, which is crucial for reliability and performance guarantees. It helps us prepare for the most challenging scenarios and ensures our solution will work efficiently even in the most demanding cases.
+\end{itemize}
+
+\section{Stable Matching}
+\textbf{Stable Matching} is a problem in which we (for example) want to match n men and n women where each person has ranked all members of opposite sex. The goal is to find a matching where no two people would prefer each other over their current partners.
+\begin{itemize}
+    \item A matching is stable if no pair (A,B) exists where:
+        \begin{itemize}
+            \item A prefers B over their current match
+            \item B prefers A over their current match
+        \end{itemize}
+\end{itemize}
+
+\subsection{Gale-Shapley Algorithm}
+\begin{itemize}
+    \item Each man proposes to his most preferred woman who hasn't rejected him
+    \item Each woman accepts if:
+        \begin{itemize}
+            \item She is unmatched, or
+            \item She prefers the new proposal over her current match
+        \end{itemize}
+    \item Process continues until everyone is matched
+    \item Always produces a stable matching
+    \item Proposer-optimal, meaning the proposer gets the best possible stable matching for them.
+\end{itemize}
+
+\subsection{Time Complexity}
+\begin{itemize}
+    \item O(n²) where n is number of men/women
+    \item Each man proposes at most n times
+    \item n men making proposals
+    \item Total: n * n = O(n²)
+\end{itemize}
+
+\subsection{Example Questions}
+\begin{itemize}
+    \item \textbf{Q:} Explain why the Gale-Shapley algorithm finds a stable matching.
+    \item \textbf{A:} Gale-Shapley always finds a stable matching because it continues until everyone is matched and no pair would prefer each other over their current matches.
+
+    \item \textbf{Q:} Can there be multiple stable matchings for the same set of preferences? Give an example.
+    \item \textbf{A:} Yes, there can be multiple stable matchings. For example, with 2 men (A,B) and 2 women (X,Y), if A prefers X>Y, B prefers Y>X, X prefers B>A, and Y prefers A>B, then both (A-X, B-Y) and (A-Y, B-X) are stable matchings.
+
+    \item \textbf{Q:} What happens if we reverse the roles in Gale-Shapley (women propose to men)?
+    \item \textbf{A:} The algorithm still works but it will be women-optimal instead of men-optimal. In this algorithm the one who proposes is the one who gets the best possible stable matching.
+
+    \item \textbf{Q:} Why can't a man be rejected by all women in the Gale-Shapley algorithm?
+    \item \textbf{A:} Because there are equal numbers of men and women, and each woman can only be matched to one man. If a man was rejected by all women, it would mean all women are matched to other men, which is impossible since there are n men and n women.
+\end{itemize}
+
+\section{Data Structures}
+\subsection{Priority Queue}
+\begin{itemize}
+    \item A data structure that always gives the element with highest (or lowest) priority
+    \item Internal Implementation:
+    \begin{itemize}
+        \item Stored as a binary heap in a contiguous array
+        \item For any element at index $i$:
+        \begin{itemize}
+            \item Left child is at index $2i + 1$
+            \item Right child is at index $2i + 2$
+            \item Parent is at index $\lfloor(i-1)/2\rfloor$
+        \end{itemize}
+        \item In a min-heap, each parent node must be less than or equal to its children (smallest element at root). A max-heap is the opposite - each parent is greater than or equal to its children (largest element at root)
+    \end{itemize}
+    \item Main Operations:
+    \begin{itemize}
+        \item \textbf{Insert(x)}:
+        \begin{itemize}
+            \item Add element at the end of the array
+            \item "Bubble up" by swapping with parent until heap property is satisfied
+            \item Time complexity: O(log n)
+        \end{itemize}
+        \item \textbf{ExtractMin()} (or \textbf{ExtractMax()}):
+        \begin{itemize}
+            \item Remove root element
+            \item Move last element to root
+            \item "Bubble down" by swapping with the smaller of the two children until heap property is satisfied
+            \item Time complexity: O(log n)
+        \end{itemize}
+        \item \textbf{Peek()}:
+        \begin{itemize}
+            \item Simply return the root element (index 0)
+            \item Time complexity: O(1)
+        \end{itemize}
+    \end{itemize}
+    \item Applications:
+    \begin{itemize}
+        \item Dijkstra's algorithm (for shortest paths)
+        \item Prim's algorithm (for MSTs)
+        \item Task scheduling
+        \item Event-driven simulation
+    \end{itemize}
+\end{itemize}
+
+\subsection{Union-Find}
+\begin{itemize}
+    \item A simple data structure for tracking connected components
+    \item Implementation:
+    \begin{itemize}
+        \item Parent array: index = vertex, value = parent vertex
+        \item Rank array: index = vertex, value = height of tree rooted at vertex
+        \item If a vertex is its own parent, it's a root
+        \item Example: 
+        \begin{itemize}
+            \item Parent array: [0, 0, 1, 1]
+            \item Rank array: [1, 2, 0, 0]
+            \item Means:
+            \begin{itemize}
+                \item Vertices 0 and 1 are roots (they point to themselves)
+                \item Vertex 2's parent is 1
+                \item Vertex 3's parent is 1
+                \item Tree at 0 has height 1
+                \item Tree at 1 has height 2
+                \item So vertices 0, 1, 2, and 3 form two trees: {0} and {1,2,3}
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+    \item Operations:
+    \begin{itemize}
+        \item Find: Follow parent pointers until we reach a root
+        \item Union: Make root of smaller tree point to root of larger tree
+    \end{itemize}
+    \item Optimizations:
+    \begin{itemize}
+        \item Path Compression: During Find, make all nodes point directly to root
+        \item Union by Rank: Use rank array to always attach smaller tree to larger one
+    \end{itemize}
+    \item Time Complexity: O($\alpha$(n)) where $\alpha$ is the inverse Ackermann function (a function that grows so slowly it's practically constant)
+\end{itemize}
+
+\subsection{Hash Tables}
+A hash table stores key-value pairs and provides fast lookups. It uses a hash function to convert keys into array indices.
+
+\begin{itemize}
+    \item \textbf{How it works:}
+    \begin{itemize}
+        \item Hash Function: Converts key to a number
+        \item Modulo Operation: Converts hash to array index
+        \item Collision Handling: When two keys map to same index
+    \end{itemize}
+
+    \item \textbf{Collision Handling Methods:}
+    \begin{itemize}
+        \item \textbf{Separate Chaining}
+        \begin{itemize}
+            \item Each array slot holds a list
+            \item Colliding items go in the same list
+            \item Simple but can get slow with long lists
+        \end{itemize}
+        \item \textbf{Open Addressing}
+        \begin{itemize}
+            \item Try to find another empty slot ("probing")
+            \item Types of probing:
+            \begin{itemize}
+                \item \textbf{Linear}: try next slot, then next, etc.
+                \item \textbf{Quadratic}: try slots with increasing gaps like +1, +4, +9, etc.
+                \item \textbf{Double hashing}: use two different hash functions - first one gives initial position, second one gives step size for probing
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{Deletion in Open Addressing:}
+    \begin{itemize}
+        \item Can't just clear slot (breaks probe chain)
+        \item Two approaches:
+        \begin{itemize}
+            \item Use tombstone (special marker)
+            \item Move items back (more complex)
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{Load Factor ($\alpha$):}
+    \begin{itemize}
+        \item $\alpha$ = number of items / total slots
+        \item Affects performance and insertion success
+        \item Different methods have different limits:
+        \begin{itemize}
+            \item Separate chaining: works with $\alpha$ > 1
+            \item Linear probing: works up to $\alpha$ $\approx$ 0.7-0.9
+            \item Quadratic probing: keep $\alpha$ $\leq$ 0.5
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Example Questions}
+\begin{itemize}
+    \item \textbf{Q:} With open addressing, how can pairs be deleted?
+    \item \textbf{A:} Use a special marker (tombstone) to mark deleted slots, or move elements back to maintain the probe chain.
+
+    \item \textbf{Q:} What does quadratic probing mean?
+    \item \textbf{A:} When a collision occurs, try slots at increasing squared distances (h+1, h+4, h+9, etc.) from the original hash position.
+
+    \item \textbf{Q:} What does double hashing mean? Why can $\alpha$ be larger with double hashing than with quadratic probing?
+    \item \textbf{A:} Use two different hash functions to determine the probe sequence; it can handle higher load factors because it provides better distribution of probes.
+
+    \item \textbf{Q:} Why can't we just delete a slot in open addressing by setting it to empty? What problems would this cause?
+    \item \textbf{A:} Setting a slot to empty would break the probe chain. If we later search for a key that was inserted after the deleted item, we would stop at the empty slot and never find the key, even though it exists in the table.
+
+    \item \textbf{Q:} Compare the advantages and disadvantages of separate chaining versus open addressing.
+    \item \textbf{A:} Separate chaining is simpler to implement and can handle any load factor, but uses more memory and can be slower due to list traversal. Open addressing is more memory efficient and can be faster due to better cache locality, but is more complex to implement and has stricter load factor limits.
+
+    \item \textbf{Q:} What happens to the performance of a hash table as the load factor increases? Why?
+    \item \textbf{A:} Performance degrades as load factor increases because there are more collisions, leading to longer probe sequences in open addressing or longer chains in separate chaining. This means more comparisons are needed to find or insert items.
+
+    \item \textbf{Q:} Why might quadratic probing be better than linear probing in practice?
+    \item \textbf{A:} Quadratic probing helps avoid primary clustering (where items cluster around the same initial positions) by spreading out the probe sequence. This leads to more even distribution of items and better performance, especially at higher load factors.
+\end{itemize}
+
+\subsection{Graph Representations}
+\begin{itemize}
+    \item \textbf{Adjacency Matrix:}
+    \begin{itemize}
+        \item 2D array where A[i][j] = 1 if edge exists between vertex i and vertex j
+        \item Indices i and j correspond to vertex numbers (e.g., vertex 0, 1, 2, etc.)
+        \item For a graph with n vertices, matrix is n $\times$ n
+        \item Example: If A[2][3] = 1, there's an edge from vertex 2 to vertex 3
+        \item Space: $\Theta$(Vertices$^2$)
+        \item Good for dense graphs (many edges)
+        \item Fast edge lookup: O(1)
+    \end{itemize}
+
+    \item \textbf{Adjacency List:}
+    \begin{itemize}
+        \item Array of lists, where each list contains neighbors
+        \item Space: $\Theta$(Vertices + Edges)
+        \item Good for sparse graphs (few edges)
+        \item Slower edge lookup: O(number of edges connected to vertex)
+    \end{itemize}
+\end{itemize}
+
+\subsection{Graph Traversal}
+\begin{itemize}
+    \item \textbf{Depth-First Search (DFS):}
+    \begin{itemize}
+        \item Explore as far as possible along each branch before backtracking
+        \item Uses stack (implicitly in recursion)
+        \item Time: O(Vertices + Edges)
+        \item Applications: cycle detection, topological sort, maze solving
+    \end{itemize}
+
+    \item \textbf{Breadth-First Search (BFS):}
+    \begin{itemize}
+        \item Explore all neighbors at current depth before moving deeper
+        \item Uses queue
+        \item Time: O(Vertices + Edges)
+        \item Applications: shortest path (unweighted), level-order traversal
+    \end{itemize}
+\end{itemize}
+
+\subsection{Example Questions}
+\begin{itemize}
+    \item \textbf{Q:} When would you choose an adjacency matrix over an adjacency list?
+    \item \textbf{A:} Use adjacency matrix when the graph is dense (many edges) and you need fast edge lookups. The O(1) edge lookup time can be worth the extra space for dense graphs.
+
+    \item \textbf{Q:} What's the main difference between DFS and BFS?
+    \item \textbf{A:} DFS explores as far as possible along each branch before backtracking, while BFS explores all neighbors at the current depth before moving deeper. This makes BFS better for finding shortest paths in unweighted graphs.
+
+    \item \textbf{Q:} Why is the time complexity of both DFS and BFS O(Vertices + Edges)?
+    \item \textbf{A:} Both visit each vertex once and each edge once. The total work is the sum of visiting all vertices and exploring all edges.
+    
+    \item \textbf{Q:} In a maze-solving problem, why might DFS be better than BFS?
+    \item \textbf{A:} DFS is better for maze-solving because it explores one path completely before backtracking, which is more memory-efficient than BFS's level-by-level approach. DFS also naturally follows the physical structure of a maze.
+
+    \item \textbf{Q:} How would you detect a cycle in an undirected graph using DFS or BFS?
+    \item \textbf{A:} Both algorithms detect cycles the same way: if you encounter a vertex that's already been visited and it's not the parent of the current vertex, then you've found a cycle. The only difference is that BFS will find the cycle through vertices at similar levels, while DFS might find it through a deeper path.
+
+    \item \textbf{Q:} Why does BFS guarantee the shortest path in an unweighted graph?
+    \item \textbf{A:} BFS explores vertices in order of their distance from the start vertex. When it first visits a vertex, it must be through the shortest path because any longer path would have to go through vertices that haven't been visited yet.
+\end{itemize}
+
+\section{Shortest Paths and MSTs}
+\subsection{Minimum Spanning Trees (MST)}
+\begin{itemize}
+    \item A tree that connects all vertices with minimum total edge weight
+    \item Properties:
+    \begin{itemize}
+        \item No cycles (by definition of a tree)
+        \item Connects all vertices
+        \item Has exactly Vertices-1 edges
+    \end{itemize}
+    \item Applications:
+    \begin{itemize}
+        \item Network design (minimizing cost of wiring/cables)
+        \item Road planning
+        \item Clustering
+    \end{itemize}
+\end{itemize}
+
+\subsection{Creating an MST: Dijkstra's Algorithm}
+\begin{itemize}
+    \item Finds shortest paths from a source vertex to all other vertices
+    \item Key idea: Always process the vertex with smallest known distance
+    \item Process:
+    \begin{itemize}
+        \item Use priority queue to track vertices by their current distance (to source (when we say distance we always mean distance to source))
+        \item Initialize distances array: 0 for source, $\infty$ for all others
+        \item Initialize visited array: all vertices marked as unvisited
+        \item For each vertex:
+        \begin{itemize}
+            \item For each unvisited neighbor:
+            \begin{itemize}
+                \item Calculate new distance = current vertex's distance + edge weight
+                \item If new distance is shorter than current best in the distance array, update distance array
+                \item Add neighbor to priority queue if not present, or update its distance in queue if already present (using a hash map to find its position)
+            \end{itemize}
+            \item Mark current vertex as visited in visited array
+        \end{itemize}
+    \end{itemize}
+    \item Properties:
+    \begin{itemize}
+        \item Works only with non-negative edge weights
+        \item Gives shortest path when all weights are positive
+        \item Uses a priority queue for efficiency
+    \end{itemize}
+    \item Time complexity: O((Vertices + Edges)log Vertices)
+    \item Space complexity: O(Vertices) for distances and priority queue
+\end{itemize}
+
+\subsection{Jarnik's Algorithm (Prim)}
+\begin{itemize}
+    \item Builds MST by growing a single tree from a starting vertex
+    \item Key idea: Always add the cheapest edge that connects to a new vertex
+    \item Process:
+    \begin{itemize}
+        \item Start with any vertex
+        \item Keep track of cheapest edge to each unvisited vertex
+        \item At each step:
+        \begin{itemize}
+            \item Add vertex with cheapest connecting edge
+            \item Update costs to unvisited neighbors
+            \item Mark vertex as visited
+        \end{itemize}
+    \end{itemize}
+    \item Properties:
+    \begin{itemize}
+        \item Always maintains a single connected tree
+        \item Guarantees minimum total weight
+        \item Similar to Dijkstra's but focuses on edge weights, not path lengths
+    \end{itemize}
+    \item Time complexity: O((Vertices + Edges)log Vertices)
+    \item Space complexity: O(Vertices) for costs and priority queue
+\end{itemize}
+
+\subsection{Kruskal's Algorithm}
+\begin{itemize}
+    \item Builds MST by adding edges in order of increasing weight
+    \item Key idea: Always add the smallest edge that connects two different trees
+    \item (Sorting can be reversed to get a max-spanning tree instead of min-spanning tree)
+    \item Process:
+    \begin{itemize}
+        \item Sort all edges by weight so that we can later know that we are adding edges in order of increasing weight, smallest first
+        \item Start with empty graph
+        \item For each edge in sorted order:
+        \begin{itemize}
+            \item Add edge if it connects two different trees (using Union-Find to check)
+            \item Skip edge if it would connect vertices in the same tree
+        \end{itemize}
+    \end{itemize}
+    \item Implementation details:
+    \begin{itemize}
+        \item Use Union-Find data structure to track connected components
+        \item Path compression and union by rank for efficiency
+    \end{itemize}
+
+    \item Time complexity is O(M log M) where M is number of edges and is dominated by sorting of edges.
+
+    \item Properties:
+    \begin{itemize}
+        \item Can handle disconnected components initially
+        \item Works with any graph structure
+        \item Produces same total weight as Prim's (though different edges)
+    \end{itemize}
+    \item Real-world considerations:
+    \begin{itemize}
+        \item No redundancy in final tree - if an edge fails, network becomes disconnected and needs to be recomputed
+    \end{itemize}
+    \item Applications:
+    \begin{itemize}
+        \item Any scenario where you need to:
+        \begin{itemize}
+            \item Connect all points
+            \item Minimize total cost
+            \item Have exactly one unique path between any two points
+        \end{itemize}
+        \item For example: Network design (minimizing cost of wiring/cables), clustering, road planning
+    \end{itemize}
+\end{itemize}
+
+\subsection{Example Questions}
+\begin{itemize}
+    \item \textbf{Q:} Why does Dijkstra's algorithm only work with non-negative edge weights?
+    \item \textbf{A:} With negative weights, the "greedy" choice of always taking the shortest path might not be optimal. A longer path with negative edges could actually be shorter than a direct path with positive edges.
+
+    \item \textbf{Q:} What's the main difference between Prim's and Kruskal's algorithms?
+    \item \textbf{A:} Prim's grows a single tree by always adding the cheapest edge that connects to a new vertex, while Kruskal's builds multiple trees and merges them by adding the cheapest edge that doesn't create a cycle (aka doesn't connect two vertices in the same tree).
+
+    \item \textbf{Q:} Why do we need the Union-Find data structure in Kruskal's algorithm?
+    \item \textbf{A:} Union-Find efficiently tracks which vertices are connected, allowing us to quickly check if adding an edge would create a cycle. Without it, we'd need to do a full graph traversal to check for cycles, which would be much slower.
+
+    \item \textbf{Q:} How does path compression in Union-Find improve performance?
+    \item \textbf{A:} Path compression makes all nodes point directly to their root during a Find operation, flattening the tree structure. This makes future operations faster because we don't have to traverse long chains of parent pointers.
+
+    \item \textbf{Q:} Why does Kruskal's algorithm produce an MST?
+    \item \textbf{A:} Kruskal's algorithm always picks the smallest available edge that doesn't create a cycle. This ensures minimal total weight and guarantees all nodes are connected without cycles — which defines a Minimum Spanning Tree.
+
+    \item \textbf{Q:} What is the time complexity of Kruskal's algorithm, and why?
+    \item \textbf{A:} The time complexity is O(M log M). This is because fastest possible sorting algorithm works by repeatedly splitting the list in the middle, which takes log M steps, and at each step it processes all M edges — so the total work is M · log M. Sorting takes the majority of the time and the union-find operations are nearly constant time due to path compression and union by rank. This leaves us with O(M log M).
+
+    \item \textbf{Q:} What happens if an included edge collapses in real applications?
+    \item \textbf{A:} The network becomes disconnected since it's already the minimal amount of edges possible.
+
+    \item \textbf{Q:} What's the main difference between Prim's and Kruskal's algorithms?
+    \item \textbf{A:} Prim's grows a single tree by always adding the cheapest edge that connects to a new vertex, while Kruskal's builds multiple trees and merges them by adding the cheapest edge that doesn't create a cycle (aka doesn't connect two vertices in the same tree).
+
+    \item \textbf{Q:} Why do we need the Union-Find data structure in Kruskal's algorithm?
+    \item \textbf{A:} Union-Find efficiently tracks which vertices are connected, allowing us to quickly check if adding an edge would create a cycle. Without it, we'd need to do a full graph traversal to check for cycles, which would be much slower.
+
+    \item \textbf{Q:} What happens if the graph is disconnected? Can Kruskal's still find an MST?
+    \item \textbf{A:} The algorithm will naturally handle disconnected components by not adding edges between them creating a collection of MSTs
+
+    \item \textbf{Q:} Can Dijkstra's algorithm handle negative edge weights?
+    \item \textbf{A:} No, Dijkstra's algorithm cannot handle negative edge weights. This is because the algorithm assumes that the shortest path to a vertex is found when we first visit it. With negative weights, a longer path with negative edges could actually be shorter than a direct path with positive edges, breaking this assumption.
+
+    \item \textbf{Q:} Can both Kruskal's and Prim's algorithms handle negative edge weights?
+    \item \textbf{A:} Yes. Because they only care about the relative ordering of edge weights when choosing which edges to add to the tree, not their absolute values. The minimum spanning tree will still be found correctly regardless of whether the weights are positive or negative.
+\end{itemize}
+
+\end{multicols}
+
+\end{document} 
