@@ -1161,6 +1161,129 @@ Complexity classes are groups of problems that are similar in how hard they are 
     \item \textbf{A:} This greedy approach doesn't always find the optimal solution. Sometimes picking a set that covers fewer elements now leads to a better overall solution later. For example, with elements {1,2,3,4,5} and sets A={1,2,3}, B={2,3,4}, C={3,4,5}, D={1,4,5}, the greedy approach might pick 3 sets while the optimal solution uses just 2 sets.
 \end{itemize}
 
-\end{multicols}
+\section{Linear Programming}
+Linear Programming (LP) is a method to find the best outcome in a mathematical model where all relationships are linear (straight lines). The goal is to maximize or minimize a linear objective function while satisfying a set of linear constraints.
 
+\subsection{Key Components}
+\begin{itemize}
+    \item Variables: What we're trying to find ($x_1, x_2, ...$)
+    \item Objective Function: What we want to maximize/minimize
+    \item Constraints: Limits on the variables
+    \item Feasible Region: All points that satisfy the constraints
+\end{itemize}
+
+\subsection{Example Problem}
+Here's a simple example of a linear programming problem:
+\begin{itemize}
+    \item Goal: Maximize $3x + 2y$ (this is our objective function)
+    \item Constraints (these are the conditions our solution must satisfy):
+    \begin{itemize}
+        \item $x + y \leq 10$ (total of x and y cannot exceed 10)
+        \item $2x + y \leq 15$ (twice x plus y cannot exceed 15)
+        \item $x \geq 0$ (x must be non-negative)
+        \item $y \geq 0$ (y must be non-negative)
+    \end{itemize}
+\end{itemize}
+
+\subsection{Solving Methods}
+\subsubsection{Simplex Algorithm}
+\begin{itemize}
+    \item Moves along edges of feasible region
+    \item Stops at optimal vertex
+    \item Time complexity: Usually polynomial, but can be exponential
+\end{itemize}
+
+\subsubsection{Interior Point Methods}
+\begin{itemize}
+    \item Moves through interior of feasible region
+    \item Often faster for large problems
+    \item Polynomial time complexity
+\end{itemize}
+
+\subsection{Integer Linear Programming (ILP)}
+Integer Linear Programming is similar to regular LP, but with the additional constraint that variables must be integers. This makes the problem much harder to solve.
+
+\subsubsection{Applications}
+\begin{itemize}
+    \item Scheduling problems
+    \item Resource allocation
+    \item Network design
+\end{itemize}
+
+\subsubsection{Solving Methods}
+\begin{itemize}
+    \item Branch and Bound
+    \item Cutting Plane
+    \item Often use LP relaxation as starting point
+\end{itemize}
+
+\subsubsection{2D Bin Packing}
+A practical example of optimization in manufacturing and material cutting:
+\begin{itemize}
+    \item Problem: Fit multiple shapes onto a fixed-size sheet of material
+    \item Variables: 
+    \begin{itemize}
+        \item Continuous: Position (x,y) and rotation of each shape
+        \item Binary: Whether each shape is used or not
+    \end{itemize}
+    \item Constraints:
+    \begin{itemize}
+        \item Shapes must fit within sheet boundaries
+        \item Shapes cannot overlap
+        \item Each shape must be placed (or not at all)
+    \end{itemize}
+    \item Objective: Maximize number of shapes or minimize waste
+    \item Challenges:
+    \begin{itemize}
+        \item Non-linear constraints (for non-overlapping)
+        \item Trigonometric functions (for rotations)
+        \item NP-hard complexity
+    \end{itemize}
+    \item Classification: Mixed Integer Non-Linear Programming (MINLP)
+    \item Practical solutions:
+    \begin{itemize}
+        \item Heuristic approaches
+        \item Approximation algorithms
+        \item Specialized software
+    \end{itemize}
+\end{itemize}
+
+\subsection{Applications}
+\begin{itemize}
+    \item Resource allocation
+    \item Production planning
+    \item Transportation problems
+    \item Network flow optimization
+    \item Portfolio optimization
+    \item Diet problems
+    \item Game theory
+\end{itemize}
+
+\subsection{Duality}
+\begin{itemize}
+    \item Every LP has a dual problem
+    \item Dual of maximization is minimization
+    \item Dual of constraints are variables
+    \item Strong duality: Optimal values are equal
+    \item Weak duality: Dual gives bound on primal
+\end{itemize}
+
+\subsection{Sensitivity Analysis}
+\begin{itemize}
+    \item How changes in parameters affect solution
+    \item Shadow prices: Value of relaxing constraints
+    \item Range of validity for current solution
+    \item Important for real-world applications
+\end{itemize}
+
+\subsection{Example Questions}
+\begin{itemize}
+    \item \textbf{Q:} Explain what the simplex algorithm can do (but not why it works).
+    \item \textbf{A:} The simplex algorithm finds the optimal solution to a linear programming problem by moving along edges of the feasible region to vertices with better objective values.
+
+    \item \textbf{Q:} Explain what the branch-and-bound paradigm is and how it can be used in integer linear programming.
+    \item \textbf{A:} Branch-and-bound solves integer programs by solving relaxed linear programs, branching on fractional variables, and using bounds to prune the search tree.
+\end{itemize}
+
+\end{multicols}
 \end{document} 
