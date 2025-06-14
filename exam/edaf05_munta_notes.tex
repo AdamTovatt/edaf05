@@ -370,6 +370,50 @@ A hash table stores key-value pairs and provides fast lookups. It uses a hash fu
     \item \textbf{A:} BFS explores vertices in order of their distance from the start vertex. When it first visits a vertex, it must be through the shortest path because any longer path would have to go through vertices that haven't been visited yet.
 \end{itemize}
 
+\section{Greedy Algorithms}
+Greedy algorithms make locally optimal choices at each step, hoping to find a global optimum. They are simple to implement and often efficient, but don't always find the optimal solution.
+
+\subsection{Key Characteristics}
+\begin{itemize}
+    \item Makes decisions one at a time
+    \item Never reconsider previous choices
+    \item Always takes the best immediate option
+\end{itemize}
+
+\subsection{Common Applications}
+\begin{itemize}
+    \item Scheduling problems
+    \item Minimum spanning trees (Prim's and Kruskal's)
+    \item Huffman coding
+    \item Activity selection
+\end{itemize}
+
+\subsection{Proving Correctness}
+There are two main approaches to prove a greedy algorithm is correct:
+\begin{itemize}
+    \item Exchange argument:
+    \begin{itemize}
+        \item Assume there's a better solution
+        \item Show we can exchange elements to match our greedy solution
+        \item Prove this doesn't make the solution worse
+        \item Example: In activity selection, if we can swap activities, we can always choose the one that ends first
+    \end{itemize}
+    \item Greedy stays ahead:
+    \begin{itemize}
+        \item Show greedy solution is at least as good at each step
+        \item Compare with any other solution
+        \item Prove it maintains this advantage
+        \item Example: In Huffman coding, show greedy choice leads to optimal prefix code
+    \end{itemize}
+\end{itemize}
+
+\subsection{Example: Activity Selection}
+\begin{itemize}
+    \item Problem: Select maximum number of activities that don't overlap
+    \item Greedy choice: Always pick the activity with earliest finish time
+    \item Why it works: Leaves maximum time for remaining activities
+\end{itemize}
+
 \section{Shortest Paths and MSTs}
 \subsection{Minimum Spanning Trees (MST)}
 \begin{itemize}
