@@ -8,17 +8,21 @@
 \usepackage{geometry}
 \usepackage{multicol}
 \usepackage{titlesec}
+\usepackage{parskip}
+\setlength{\parskip}{0.1em}  % Reduce the space between paragraphs
 \geometry{a4paper, margin=0.4in}
 
 % Adjust spacing for sections and subsections
 \titlespacing{\section}{0pt}{12pt}{4pt}
 \titlespacing{\subsection}{0pt}{10pt}{3pt}
+\titlespacing{\subsubsection}{0pt}{8pt}{2pt}
+\titlespacing{\paragraph}{0pt}{7pt}{2pt}
 
 % Make itemize environments more compact
 \usepackage{enumitem}
 \setlist[itemize]{topsep=0pt, itemsep=0pt, parsep=0pt, leftmargin=*}
 
-\title{EDAF05 Munta Notes}
+\title{EDAF05 Algorithms, Data Structures and Time \& Space Complexity}
 \author{Adam Tovatt}
 \date{2025-06-14}
 
@@ -583,71 +587,73 @@ A hash table stores key-value pairs and provides fast lookups. It uses a hash fu
 \end{itemize}
 
 \subsection{Convex Hull}
+A convex hull is the smallest convex polygon that contains all points in a set.
+It has several important properties: all points must lie on or inside the hull, no interior angles can be greater than 180 degrees, and it has the minimum possible perimeter that can enclose all points.
+
+\subsubsection{Jarvis March (Gift Wrapping)}
 \begin{itemize}
-    \item Smallest convex polygon containing all points
-    \item Properties:
+    \item Take the leftmost point as starting point and imagine a horizontal line to the right from it
+    \item For each other point, draw a line from the starting point to this other point
+    \item Measure the angle between the horizontal line and this new line
+    \item Take the other point that creates the largest counterclockwise angle with the horizontal line and consider it part of the hull, the edge to it is the new "current edge"
+    \item For each subsequent point on the hull:
     \begin{itemize}
-        \item All points lie on or inside the hull
-        \item No interior angles $>$ 180\textdegree
-        \item Minimum perimeter enclosing all points
+        \item Find the point that makes the largest counterclockwise angle with the current edge
+        \item This is done by comparing angles between the current edge and all other points
+        \item The point with the largest angle will be the next point on the hull and the edge to it the new "current edge"
     \end{itemize}
-    \item Algorithms:
+    \item Continue until we return to the starting point
+    \item Time: $O(nh)$ where $n$ is the total number of points and $h$ is number of points on the hull
+    \item Worst case: $O(n^2)$ when all points are on the hull (i.e., when $h = n$)
+    \item Optimization: We don't actually need to calculate angles. Instead, we can use cross products to determine which point makes the largest counterclockwise turn. For points A, B, C: if cross product $(B-A) \times (C-A)$ is positive, C is counterclockwise from B and so on.
+\end{itemize}
+\subsubsection{Graham Scan}
+A polar angle is the angle between a point and a reference point relative to a reference direction (usually horizontal right).
+
+\textbf{Steps:}
+\begin{itemize}
+    \item Find the point with lowest y-coordinate (if tie, take leftmost) - this is our reference point. This point is guaranteed to be on the hull.
+    \item Sort all other points by their polar angle in ascending order (counterclockwise) from the reference point (use cross product for speed). This means we'll process points starting from the right of the reference point and moving counterclockwise.
+    \item If two points have same polar angle, keep only the furthest one from the reference point (the closer point will be inside the hull)
+    \item Start with the first three points in a stack
+    \item For each remaining point:
     \begin{itemize}
-        \item Jarvis March (Gift Wrapping):
-        \begin{itemize}
-            \item Take the leftmost point as starting point and imagine a horizontal line to the right from it
-            \item For each other point, draw a line from the starting point to this other point
-            \item Measure the angle between the horizontal line and this new line
-            \item Take the other point that creates the largest counterclockwise angle with the horizontal line and consider it part of the hull, the edge to it is the new "current edge"
-            \item For each subsequent point on the hull:
-            \begin{itemize}
-                \item Find the point that makes the largest counterclockwise angle with the current edge
-                \item This is done by comparing angles between the current edge and all other points
-                \item The point with the largest angle will be the next point on the hull and the edge to it the new "current edge"
-            \end{itemize}
-            \item Continue until we return to the starting point
-            \item Time: $O(nh)$ where $n$ is the total number of points and $h$ is number of points on the hull
-            \item Worst case: $O(n^2)$ when all points are on the hull (i.e., when $h = n$)
-            \item Optimization: We don't actually need to calculate angles. Instead, we can use cross products to determine which point makes the largest counterclockwise turn. For points A, B, C: if cross product $(B-A) \times (C-A)$ is positive, C is counterclockwise from B and so on.
-        \end{itemize}
-        \item Graham Scan:
-        \begin{itemize}
-            \item Sort points by polar angle
-            \item Use stack to build hull
-            \item Time: $O(n \log n)$ due to sorting
-        \end{itemize}
-        \item Preparata-Hong:
-        \begin{itemize}
-            \item Divide-and-conquer algorithm for 3D convex hull
-            \item Process:
-            \begin{itemize}
-                \item Split points into two halves
-                \item Find hulls recursively
-                \item Merge hulls by finding ``bridge'' edges
-            \end{itemize}
-            \item Time complexity: $O(n \log n)$
-            \item Advantages:
-            \begin{itemize}
-                \item Works in 3D
-                \item Efficient merging step
-                \item Good for parallel implementation
-            \end{itemize}
-            \item Applications:
-            \begin{itemize}
-                \item 3D modeling
-                \item Computer graphics
-                \item Collision detection
-            \end{itemize}
-        \end{itemize}
+        \item While the last three points in stack make a right turn (negative cross product) or are collinear (zero cross product), pop the middle point
+        \item Push the current point onto stack
     \end{itemize}
-    \item Applications:
+    \item The stack now contains the convex hull points in counterclockwise order
+\end{itemize}
+
+The time complexity is $O(n \log n)$ due to sorting, and space complexity is $O(n)$ for the stack.
+Graham Scan has several advantages over Jarvis March: it's more efficient when many points are on the hull, has a guaranteed $O(n \log n)$ time complexity, and is relatively simple to implement.
+
+\subsubsection{Preparata-Hong (Merge Hull)}
+Preparata-Hong is a divide-and-conquer algorithm for finding the convex hull that works in both 2D and 3D.
+It's particularly notable for being one of the first efficient algorithms for 3D convex hulls.
+The process involves splitting the points into two halves, finding the hulls recursively, and then merging the hulls by finding "bridge" edges. The time complexity is $O(n \log n)$.
+Its applications include 3D modeling, computer graphics, and collision detection.
+The algorithm is well-suited for parallelization because the recursive subproblems can be solved independently in parallel, and the merging step can also be parallelized.
+
+\textbf{Process for 2D (3D is similar but more complex):}
+\begin{itemize}
+    \item Split points into two halves (for example by picking a point and dividing the remaining points into those with smaller and larger x-coordinates)
+    \item Find hulls recursively:
     \begin{itemize}
-        \item Collision detection
-        \item Path planning
-        \item Pattern recognition
-        \item Computer graphics
+        \item Base case: if we have 3 or fewer points, order them clockwise using cross products (like in Graham Scan). This is already a convex hull.
+        \item Otherwise, split the points and recursively find the hulls of each half
     \end{itemize}
-    \item Base case: When we have 3 or fewer points, use brute force
+    \item Merge hulls by finding ``bridge'' edges:
+    \begin{itemize}
+        \item Find the upper bridge: start with rightmost point of left hull (highest x-coordinate) and leftmost point of right hull (lowest x-coordinate)
+        \item Look at next points clockwise on left hull and counterclockwise on right hull
+        \item For each hull, if the line between current points would go below its next point, move to that next point
+        \item Repeat until we find points where the line between them would go above their next neighbors
+        \item Find the lower bridge: start with the same start points as before
+        \item Look at next points counterclockwise on left hull and clockwise on right hull
+        \item For each hull, if the line between current points would go above its next point, move to that next point
+        \item Repeat until we find points where the line between them would go below their next neighbors
+        \item Remove all points between the bridges that are not part of the new hull, maintaining clockwise order
+    \end{itemize}
 \end{itemize}
 
 \subsection{Finding Nearest Points}
@@ -697,6 +703,322 @@ A hash table stores key-value pairs and provides fast lookups. It uses a hash fu
 
     \item \textbf{Q:} How can you know the direction (left, right, or straight) when going from a point pr through ps to pt?
     \item \textbf{A:} Use the cross product of vectors ps-pr and pt-ps; positive means left turn, negative means right turn, zero means straight.
+
+    \item \textbf{Q:} What's the difference between Jarvis March and Graham Scan in terms of when each is more efficient?
+    \item \textbf{A:} Jarvis March is more efficient when the number of points on the hull (h) is small, as it runs in O(nh) time. Graham Scan is better when most points are on the hull, as it runs in O(n log n) time regardless of hull size. Graham Scan is generally preferred for large datasets as its worst case is better.
+
+    \item \textbf{Q:} How does the time complexity of finding the closest pair of points using divide and conquer compare to a brute force approach?
+    \item \textbf{A:} The divide and conquer approach runs in O(n log n) time, while brute force would be O(n²). The improvement comes from only needing to check a limited number of points in the strip between divided regions.
+
+    \item \textbf{Q:} Why do we need to check points in the 'strip' when finding the closest pair of points? What's the maximum number of points we need to check in the strip?
+    \item \textbf{A:} We need to check the strip because the closest pair might be split across the dividing line. The maximum number of points we need to check in the strip is 7, as any more points would violate the minimum distance property we've already established.
+
+    \item \textbf{Q:} In the Master Theorem, what happens when $f(n)$ grows faster than $n^{\log_b(a)}$? Give an example.
+    \item \textbf{A:} When $f(n)$ grows faster than $n^{\log_b(a)}$, the time complexity is dominated by $f(n)$, giving us $T(n) = \Theta(f(n))$. For example, if $T(n) = 2T(n/2) + n^2$, then $n^{\log_2(2)} = n$, and since $n^2$ grows faster than $n$, we get $T(n) = \Theta(n^2)$.
+
+    \item \textbf{Q:} How does the choice of starting point affect Jarvis March? Does it matter which point we start with?
+    \item \textbf{A:} The choice of starting point doesn't affect the correctness of Jarvis March, but it can affect the number of points we need to check. Starting with the leftmost point is common because it's guaranteed to be on the hull, but any point on the hull would work.
+
+    \item \textbf{Q:} How can we handle collinear points in convex hull algorithms? What special cases do we need to consider?
+    \item \textbf{A:} For collinear points, we typically want to keep only the outermost points on the hull. This means when three points are collinear, we should keep the two endpoints and remove the middle point. We need to handle this in both Jarvis March and Graham Scan to avoid including unnecessary points.
+
+    \item \textbf{Q:} Why is it important that the Master Theorem's f(n) is asymptotically positive? What could go wrong if it wasn't?
+    \item \textbf{A:} The Master Theorem requires f(n) to be asymptotically positive because negative work doesn't make sense in the context of algorithm complexity. If f(n) could be negative, it would mean the algorithm is doing "negative work" in some steps, which doesn't correspond to any real computation. This would make the recurrence relation meaningless for analyzing algorithm complexity.
+\end{itemize}
+
+\section{Dynamic Programming}
+\subsection{Main Ideas}
+Dynamic Programming is a way to solve problems by breaking them into smaller subproblems and storing solutions to avoid solving them again.
+Key characteristics:
+\begin{itemize}
+    \item Like divide-and-conquer, but subproblems overlap
+    \item Store solutions to subproblems to avoid solving them again
+    \item Use when:
+    \begin{itemize}
+        \item Problem has overlapping subproblems
+        \item Subproblems can be combined to solve main problem
+        \item We can write a recurrence relation
+    \end{itemize}
+\end{itemize}
+
+\subsection{Recurrence Relations}
+A recurrence relation is like a recipe that tells you how to solve a problem using solutions to smaller versions of the same problem.
+It has two parts:
+\begin{itemize}
+    \item The formula that shows how to combine smaller solutions
+    \item The base cases (smallest problems that we can solve directly)
+\end{itemize}
+
+\subsubsection{Examples}
+\textbf{Fibonacci}
+\begin{itemize}
+    \item Formula: $fib(n) = fib(n-1) + fib(n-2)$
+    \item Base cases: $fib(0) = 0$, $fib(1) = 1$
+\end{itemize}
+
+\textbf{Longest Increasing Subsequence}
+\begin{itemize}
+    \item Formula: $lis(i) = 1 + \max(lis(j))$ where \\~ $j < i$ and $array[j] < array[i]$
+    \item Base case: $lis(0) = 1$
+\end{itemize}
+
+\textbf{Edit Distance}
+\begin{itemize}
+    \item Formula: $ed(i,j) = \min(\text{delete}, \text{insert}, \text{replace})$
+    \item Where:
+    \begin{itemize}
+        \item delete = $ed(i-1,j) + 1$
+        \item insert = $ed(i,j-1) + 1$
+        \item replace = $ed(i-1,j-1) + cost$
+    \end{itemize}
+    \item Base case: $ed(0,0) = 0$
+\end{itemize}
+
+\subsection{Two Approaches}
+\subsubsection{Top-down (memoization):}
+\begin{itemize}
+    \item Start with main problem
+    \item Solve subproblems as needed
+    \item Store results in a table
+\end{itemize}
+
+\subsubsection{Bottom-up (tabulation):}
+\begin{itemize}
+    \item Start with smallest subproblems
+    \item Build up to main problem
+    \item Fill table systematically
+\end{itemize}
+
+\subsection{Steps to solve a DP problem:}
+\begin{enumerate}
+    \item Identify the subproblems
+    \item Write the recurrence relation
+    \item Decide on approach (top-down or bottom-up)
+    \item Implement the solution
+    \item Analyze time and space complexity
+\end{enumerate}
+
+\subsection{Sequence Alignment}
+Sequence alignment is finding the best way to align two strings by inserting gaps.
+\begin{itemize}
+    \item Used to compare DNA sequences, protein sequences, or text
+    \item Goal: Maximize similarity or minimize cost of alignment
+\end{itemize}
+\subsubsection{Process:}
+\begin{itemize}
+    \item Use 2D table where cell (i,j) represents best alignment of first i characters of string 1 and first j characters of string 2
+    \item For each cell, consider three options:
+    \begin{itemize}
+        \item Match/mismatch: align current characters
+        \item Gap in first string: skip character in string 1
+        \item Gap in second string: skip character in string 2
+    \end{itemize}
+\end{itemize}
+\subsubsection{Time complexity:}
+$O(N \times M)$ where $N$ and $M$ are string lengths
+\subsubsection{Applications:}
+\begin{itemize}
+    \item Bioinformatics: comparing DNA or protein sequences
+    \item Text processing: finding similar words or documents
+    \item Version control: finding differences between files
+\end{itemize}
+
+\subsection{Example Questions}
+\begin{itemize}
+    \item \textbf{Q:} Explain what is meant by dynamic programming.
+    \item \textbf{A:} Solving a problem by breaking it into overlapping subproblems and storing their solutions to avoid redundant calculations.
+
+    \item \textbf{Q:} What is sequence alignment and how can it be done?
+    \item \textbf{A:} Sequence alignment finds the best way to align two strings by inserting gaps; it's done using dynamic programming to maximize similarity or minimize cost.
+
+    \item \textbf{Q:} What are the key characteristics of a problem that makes it suitable for dynamic programming?
+    \item \textbf{A:} A problem is suitable for DP if it has overlapping subproblems (same subproblems are solved multiple times) and optimal substructure (optimal solution can be constructed from optimal solutions of subproblems).
+
+    \item \textbf{Q:} Compare and contrast top-down (memoization) and bottom-up (tabulation) approaches in dynamic programming.
+    \item \textbf{A:} Top-down starts with the main problem and solves subproblems as needed, storing results in a table. Bottom-up starts with smallest subproblems and builds up to the main problem, filling the table systematically. Top-down can be more intuitive and only computes needed subproblems, while bottom-up avoids recursion overhead and can be more space-efficient.
+
+    \item \textbf{Q:} In the Edit Distance problem, explain why we need to consider all three operations (delete, insert, replace) and how they contribute to the final solution.
+    \item \textbf{A:} We need all three operations because they represent different ways to transform one string into another. Delete removes a character from the first string, insert adds a character to the first string, and replace changes a character in the first string. The algorithm chooses the minimum cost among these operations at each step to find the optimal transformation sequence.
+
+    \item \textbf{Q:} How does the time and space complexity of a dynamic programming solution typically compare to a naive recursive solution?
+    \item \textbf{A:} A naive recursive solution often has exponential time complexity due to solving the same subproblems multiple times. Dynamic programming reduces this to polynomial time by storing solutions to subproblems. Space complexity is typically O(n) or O(n²) for DP, while naive recursion can use O(n) space for the call stack plus additional space for redundant computations.
+
+    \item \textbf{Q:} Explain how you would modify the Edit Distance algorithm to also return the sequence of operations that leads to the minimum distance.
+    \item \textbf{A:} We can add a second table to store the operation (delete, insert, or replace) that led to each cell's value. When filling the table, we record which operation gave the minimum value. After computing the minimum distance, we can trace back through the table following these recorded operations to reconstruct the sequence.
+
+    \item \textbf{Q:} What is the difference between overlapping subproblems and independent subproblems? Why is this distinction important for dynamic programming?
+    \item \textbf{A:} Overlapping subproblems occur when the same subproblem is solved multiple times in a recursive solution. Independent subproblems are solved only once. This distinction is crucial because dynamic programming is only beneficial for problems with overlapping subproblems - there's no need to store solutions if each subproblem is solved exactly once.
+\end{itemize}
+
+\section{Network Flow}
+\subsection{Main Ideas}
+Network flow is about finding the maximum amount of flow that can be sent from a source node to a sink node in a directed graph where each edge has a capacity.
+
+\subsubsection{Applications}
+\begin{itemize}
+    \item Finding maximum matching in bipartite graphs
+    \item Finding maximum number of edge-disjoint paths
+    \item Modeling traffic flow in networks
+    \item Finding minimum cut in a graph
+    \item Modeling water pipes and electrical systems
+    \item Ecological applications (nutrient flow)
+\end{itemize}
+
+\subsection{Ford-Fulkerson Algorithm}
+\subsubsection{Main Idea}
+Keep finding paths with available capacity and add flow until no more paths exist.
+
+\subsubsection{Steps}
+\begin{enumerate}
+    \item Start with zero flow
+    \item Find a path from source to sink with available capacity
+    \item Add flow along this path
+    \item Update residual capacities
+    \item Repeat until no more paths exist
+\end{enumerate}
+
+\subsubsection{Residual Graph}
+\begin{itemize}
+    \item Forward edges: remaining capacity
+    \item Backward edges: current flow (can be "undone")
+\end{itemize}
+
+\subsubsection{Time Complexity}
+$O(E \times \text{max\_flow})$ where:
+\begin{itemize}
+    \item $E$ is number of edges
+    \item max\_flow is the maximum possible flow
+    \item Each path finding takes $O(E)$ time
+    \item We might need to find max\_flow paths
+\end{itemize}
+
+\subsubsection{Correctness}
+The Ford-Fulkerson algorithm is correct because:
+\begin{itemize}
+    \item It always terminates (flow can only increase, and there's a maximum possible flow)
+    \item When it terminates, no augmenting path exists
+    \item By the max-flow min-cut theorem, this means we've found the maximum flow
+    \item The residual graph allows us to "undo" flow if we find a better path
+\end{itemize}
+
+\subsection{Bipartite Graph Matching}
+A bipartite graph is a graph where we can split all the vertices into two separate groups (let's call them group $L$ and group $R$), and every edge in the graph must connect a vertex from one group to a vertex in the other group. In other words, you can't have edges between vertices in the same group. This structure makes bipartite graphs perfect for modeling matching problems where we need to pair things from one group with things from another group, like matching students to courses or workers to jobs.
+
+\subsubsection{Problem Definition}
+Given a bipartite graph $G = (L \cup R, E)$, where $L$ and $R$ are our two groups of vertices and $E$ is the set of all edges connecting vertices between these groups, find the maximum number of edges that can be matched such that no two edges share a vertex.
+
+\subsubsection{Reduction to Max Flow}
+\begin{enumerate}
+    \item Add source node connected to all vertices in $L$
+    \item Add sink node connected from all vertices in $R$
+    \item Set all edge capacities to 1
+    \item Find maximum flow
+    \item The edges with flow 1 form the maximum matching
+\end{enumerate}
+
+\subsubsection{Time Complexity}
+$O(VE)$ where:
+\begin{itemize}
+    \item $V$ is number of vertices
+    \item $E$ is number of edges
+    \item Each augmenting path increases flow by 1
+    \item Maximum flow is at most $V/2$
+\end{itemize}
+
+\subsubsection{Applications}
+\begin{itemize}
+    \item Job assignment problems
+    \item Dating/matching applications
+    \item Resource allocation
+    \item Task scheduling
+\end{itemize}
+
+\subsection{Goldberg-Tarjan (Push-Relabel)}
+\subsubsection{Key Components}
+\begin{itemize}
+    \item Height labels for nodes
+    \item Excess flow at each node
+    \item Push flow to lower neighbors
+    \item Relabel nodes when stuck
+\end{itemize}
+
+\subsubsection{Time Complexity}
+$O(V^2 \times E)$ where:
+\begin{itemize}
+    \item $V$ is number of vertices
+    \item $E$ is number of edges
+    \item Better than Ford-Fulkerson for large capacities
+\end{itemize}
+
+\subsubsection{Advantages}
+\begin{itemize}
+    \item Pushes full available flow in each step
+    \item Not affected by large edge capacities
+    \item Often faster in practice
+\end{itemize}
+
+\subsection{Handling Large Capacities}
+\subsubsection{Why Ford-Fulkerson Can Be Slow}
+\begin{itemize}
+    \item Basic version increments flow by 1 unit at a time
+    \item With large capacities (e.g., 1,000,000), needs many iterations
+    \item Example: If max flow is 1,000,000, might need 1,000,000 iterations
+\end{itemize}
+
+\subsubsection{Solutions}
+\begin{itemize}
+    \item Capacity scaling:
+    \begin{itemize}
+        \item Begin with largest power of 2 less than max capacity
+        \item Halve the step size each iteration
+        \item Reduces iterations from $O(\text{max\_flow})$ to $O(\log \text{max\_flow})$
+    \end{itemize}
+    \item Use Push-Relabel algorithm instead
+    \item Use binary search over possible flow values
+\end{itemize}
+
+\subsubsection{When to Use Which Algorithm}
+\begin{itemize}
+    \item Ford-Fulkerson with capacity scaling:
+    \begin{itemize}
+        \item Good for sparse graphs
+        \item Easy to implement
+        \item Works well with small to medium capacities
+    \end{itemize}
+    \item Push-Relabel:
+    \begin{itemize}
+        \item Better for dense graphs
+        \item Better for very large capacities
+        \item More complex to implement
+        \item Often faster in practice
+    \end{itemize}
+\end{itemize}
+
+\subsection{Example Questions}
+\begin{itemize}
+    \item \textbf{Q:} What is network flow about? Give an example of when it can be used.
+    \item \textbf{A:} Network flow finds the maximum flow from source to sink in a directed graph with edge capacities. It's used for maximum matching, minimum cut, and traffic optimization.
+
+    \item \textbf{Q:} Explain the Ford-Fulkerson algorithm and why it is correct. What is its time complexity, and why?
+    \item \textbf{A:} Ford-Fulkerson repeatedly finds augmenting paths and adds flow until no more paths exist. It's correct because it always finds the maximum flow. The time complexity is $O(E \times \text{max\_flow})$ because each path finding takes $O(E)$ time and we might need to find $\text{max\_flow}$ paths.
+
+    \item \textbf{Q:} Explain the Goldberg-Tarjan (preflow-push) algorithm and why it is correct.
+    \item \textbf{A:} Goldberg-Tarjan uses node heights and excess flow, pushing flow to lower neighbors and relabeling when stuck. It's correct because it maintains the height property and terminates with maximum flow.
+
+    \item \textbf{Q:} What is a bipartite graph, and how can you determine if a graph is bipartite?
+    \item \textbf{A:} A bipartite graph can be divided into two sets with no edges within the same set. You can determine if a graph is bipartite using BFS or DFS with two colors, coloring each vertex opposite to its neighbors. If you can't do this coloring without conflicts, the graph isn't bipartite.
+
+    \item \textbf{Q:} What is the relationship between maximum flow and minimum cut in a network?
+    \item \textbf{A:} The maximum flow equals the capacity of the minimum cut (max-flow min-cut theorem). This means the bottleneck in the network is determined by the minimum cut.
+
+    \item \textbf{Q:} Why do we need backward edges in the residual graph for Ford-Fulkerson?
+    \item \textbf{A:} Backward edges allow us to "undo" flow if we find a better path. They represent the current flow that can be redirected, which is crucial for finding the optimal solution.
+
+    \item \textbf{Q:} In bipartite matching, why do we set all edge capacities to 1 when reducing to max flow?
+    \item \textbf{A:} Setting capacities to 1 ensures that each vertex can only be matched once, as the flow through any edge can be at most 1. This directly corresponds to the matching constraint where no two edges can share a vertex.
+
+    \item \textbf{Q:} What is the difference between a maximum matching and a perfect matching in a bipartite graph?
+    \item \textbf{A:} A maximum matching is the largest possible set of edges where no two edges share a vertex. A perfect matching is a maximum matching where every vertex is matched (only possible if both groups have the same size).
 \end{itemize}
 
 \end{multicols}
