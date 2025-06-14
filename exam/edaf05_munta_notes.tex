@@ -1021,6 +1021,146 @@ $O(V^2 \times E)$ where:
     \item \textbf{A:} A maximum matching is the largest possible set of edges where no two edges share a vertex. A perfect matching is a maximum matching where every vertex is matched (only possible if both groups have the same size).
 \end{itemize}
 
+\section{NP-Completeness}
+\subsection{Polynomial Time}
+Polynomial time means the time needed to solve the problem grows as a polynomial function of the input size.
+For example, if the input size is $n$, the time might grow as $n^2$ or $n^3$, but not as $2^n$ (exponential) or $n!$ (factorial).
+Problems that can be solved in polynomial time are considered "efficient" or "tractable", meaning they're solvable in a reasonable amount of time even for large inputs.
+
+\subsection{NP}
+NP stands for "Nondeterministic Polynomial time".
+It's a class of problems where, given a potential solution, we can verify if it's correct in polynomial time.
+The key characteristic is that while we can quickly check if a solution is correct, we don't know of any efficient way to find the solution itself.
+\subsection{Complexity Classes}
+\subsubsection{What are Complexity Classes?}
+Complexity classes are groups of problems that are similar in how hard they are to solve. "Hard" means how much time or memory they need. Problems in the same class can be solved in similar ways.
+
+\subsubsection{Main Classes}
+\begin{itemize}
+    \item P: Problems that can be solved in polynomial time
+    \begin{itemize}
+        \item Example: Sorting, shortest path
+        \item These are the "easy" problems
+    \end{itemize}
+    \item NP: "Nondeterministic Polynomial time"
+    \begin{itemize}
+        \item Problems where solutions can be verified in polynomial time
+        \item If we could "guess" the right answer, we could verify it quickly
+        \item Example: Given a path, can verify if it's a Hamiltonian cycle
+    \end{itemize}
+    \item NP-complete: Hardest problems in NP
+    \begin{itemize}
+        \item If we could solve any NP-complete problem quickly, we could solve all NP problems quickly
+        \item No known polynomial-time solution exists
+    \end{itemize}
+\end{itemize}
+
+\subsection{Common NP-complete Problems}
+\subsubsection{Vertex Cover}
+\begin{itemize}
+    \item Find smallest set of vertices that covers all edges
+    \item Each edge must touch at least one vertex in the set
+    \item Example: In a network, find minimum servers to monitor all connections
+\end{itemize}
+
+\subsubsection{Independent Set}
+\begin{itemize}
+    \item Find largest set of vertices with no edges between them
+    \item No two vertices in the set can be connected
+    \item Example: Find maximum number of non-conflicting tasks
+\end{itemize}
+
+\subsubsection{Set Cover}
+\begin{itemize}
+    \item Given a collection of sets, find smallest number of sets that cover all elements
+    \item Each element must be in at least one chosen set
+    \item Example: Choose minimum number of radio stations to cover all cities
+\end{itemize}
+
+\subsubsection{Traveling Salesman Problem (TSP)}
+\begin{itemize}
+    \item Find shortest route visiting all cities
+    \item Must visit each city exactly once
+    \item Example: Optimize delivery route for a truck
+\end{itemize}
+
+\subsubsection{Graph Coloring}
+\begin{itemize}
+    \item Color vertices so no adjacent vertices have same color
+    \item Find minimum number of colors needed
+    \item Example: Schedule exams so no student has two exams at same time
+\end{itemize}
+
+\subsection{Proving NP-completeness}
+\subsubsection{Two Steps}
+\begin{enumerate}
+    \item Show it's in NP:
+    \begin{itemize}
+        \item Given a solution, can verify it's correct in polynomial time
+        \item Example: For vertex cover, can check if chosen vertices cover all edges
+    \end{itemize}
+    \item Show it's NP-hard:
+    \begin{itemize}
+        \item Take a known NP-complete problem
+        \item Show how to convert any instance of that problem into an instance of your problem
+        \item The conversion must take polynomial time
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Why it Matters}
+\begin{itemize}
+    \item If a problem is NP-complete, we probably can't find an efficient solution
+    \item Instead, we need to use:
+    \begin{itemize}
+        \item Approximation algorithms
+        \item Heuristics
+        \item Special cases
+        \item Exponential-time algorithms for small inputs
+    \end{itemize}
+\end{itemize}
+
+\subsection{Example Questions}
+\begin{itemize}
+    \item \textbf{Q:} What does it mean that a problem is NP-complete?
+    \item \textbf{A:} A problem is NP-complete if it's in NP (solutions can be verified in polynomial time) and every NP problem can be reduced to it in polynomial time.
+
+    \item \textbf{Q:} If you want to prove that a new problem is NP-complete, how would you do?
+    \item \textbf{A:} Show it's in NP (verify solutions in polynomial time) and reduce a known NP-complete problem to it in polynomial time.
+
+    \item \textbf{Q:} Explain how the first NP-complete problem was shown to be NP-complete.
+    \item \textbf{A:} Boolean Satisfiability (SAT) was proven NP-complete by Cook-Levin theorem, showing any NP problem can be reduced to SAT in polynomial time.
+
+    \item \textbf{Q:} Explain how it can be shown that Hamiltonian cycle is NP-complete.
+    \item \textbf{A:} Reduce from 3-SAT by creating gadgets for variables and clauses, showing a Hamiltonian cycle exists if and only if the formula is satisfiable.
+
+    \item \textbf{Q:} Explain how it can be shown that the Traveling salesman problem is NP-complete.
+    \item \textbf{A:} Reduce from Hamiltonian cycle by setting edge weights to 1 for existing edges and 2 for non-existent edges, then solve TSP with bound n.
+
+    \item \textbf{Q:} Explain how it can be shown that graph coloring is NP-complete.
+    \item \textbf{A:} Reduce from 3-SAT by creating a graph where each variable and its negation are connected, and each clause forms a triangle, showing 3-coloring exists if and only if the formula is satisfiable.
+
+    \item \textbf{Q:} What is the difference between NP and NP-complete problems?
+    \item \textbf{A:} NP problems can have their solutions verified in polynomial time. NP-complete problems are the hardest problems in NP - if we could solve any NP-complete problem efficiently, we could solve all NP problems efficiently.
+
+    \item \textbf{Q:} Why is it important to know if a problem is NP-complete?
+    \item \textbf{A:} It tells us that we probably can't find an efficient (polynomial-time) solution. Instead, we need to use approximation algorithms, heuristics, or accept that the problem will be slow to solve for large inputs.
+
+    \item \textbf{Q:} What is a reduction in the context of NP-completeness?
+    \item \textbf{A:} A reduction is a way to convert one problem into another. If we can reduce problem A to problem B in polynomial time, and we know A is hard, then B must be at least as hard as A.
+
+    \item \textbf{Q:} Why do we use 3-SAT as a starting point for many NP-completeness proofs?
+    \item \textbf{A:} 3-SAT is a well-understood NP-complete problem that's relatively simple to work with. It's often easier to reduce from 3-SAT to other problems than to reduce from more complex problems.
+
+    \item \textbf{Q:} What is the relationship between P and NP?
+    \item \textbf{A:} P is the set of problems we can solve in polynomial time. NP is the set of problems where we can verify solutions in polynomial time. We know P is a subset of NP, but we don't know if P equals NP - this is the famous P vs NP question.
+
+    \item \textbf{Q:} How can we solve NP-complete problems in practice?
+    \item \textbf{A:} We can use approximation algorithms to get good (but not optimal) solutions, heuristics to find solutions quickly, or exact algorithms for small instances. The choice depends on whether we need optimal solutions and how large our inputs are.
+
+    \item \textbf{Q:} Why can't we solve Set Cover by just picking sets that cover the most uncovered elements?
+    \item \textbf{A:} This greedy approach doesn't always find the optimal solution. Sometimes picking a set that covers fewer elements now leads to a better overall solution later. For example, with elements {1,2,3,4,5} and sets A={1,2,3}, B={2,3,4}, C={3,4,5}, D={1,4,5}, the greedy approach might pick 3 sets while the optimal solution uses just 2 sets.
+\end{itemize}
+
 \end{multicols}
 
 \end{document} 
